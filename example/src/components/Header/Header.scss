@@ -1,0 +1,39 @@
+.Header {
+  height: 80px;
+  padding: 8px 8rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+  background-color: #1E1E1E;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  box-shadow: 1px 2px 8px rgba(0, 0, 0, 0.2);
+  z-index: 999;
+  color: #fff;
+
+  @media screen and (max-width:1200px) {
+    padding: 8px 2rem;
+  }
+
+  @media screen and (max-width:900px) {
+    padding: 8px 1rem;
+  }
+
+  .logo {
+    height: 48px;
+    margin: 0px 8px;
+  }
+
+  .section {
+    display: flex;
+    align-items: center;
+    height: 100%;
+  }
+
+  .title {
+    font-size: 20px;
+  }
+}
