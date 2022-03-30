@@ -184,7 +184,7 @@ export const saveState = (state: IState, lastImage?: string) => {
       height: state.maxHeight,
       quality: state.quality,
       format: state.format,
-      originImageSrc: state.originImageSrc,
+      originImageSrc: state.originImageSrc as any,
       basicFilters: state.basicFilters,
     });
   } else {
@@ -194,7 +194,7 @@ export const saveState = (state: IState, lastImage?: string) => {
       height: state.maxHeight,
       quality: state.quality,
       format: state.format,
-      originImageSrc: state.originImageSrc,
+      originImageSrc: state.originImageSrc as any,
       basicFilters: state.basicFilters,
     };
   }

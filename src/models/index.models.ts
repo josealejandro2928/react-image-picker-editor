@@ -21,7 +21,7 @@ export interface IState {
   maintainAspectRatio: boolean;
   format: string;
   arrayCopiedImages: Array<ICacheData>;
-  originImageSrc: string;
+  originImageSrc: string | null | undefined;
   basicFilters?: IBasicFilterState;
 }
 

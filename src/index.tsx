@@ -18,7 +18,7 @@ const initialConfig: ImagePickerConf = {
   hideAddBtn: false,
 }
 
-const ReactImagePickerEditor = memo(({ config = {} }: { config: ImagePickerConf }) => {
+const ReactImagePickerEditor = memo(({ config = {}, imageSrcProp = '' }: { config: ImagePickerConf, imageSrcProp?: string }) => {
 
   const [state, setState] = useState<IState>({
     quality: 92,
@@ -51,6 +51,44 @@ const ReactImagePickerEditor = memo(({ config = {} }: { config: ImagePickerConf 
   useEffect(() => {
     console.log("state", state);
   }, [state])
+
+  useEffect(() => {
+    (async () => {
+      if (imageSrcProp) {
+        let result = await parseToBase64(imageSrcProp);
+        let newState: IState = result.state;
+        newState.originImageSrc = imageSrcProp;
+        newState.arrayCopiedImages.push({
+          lastImage: result.imageUri,
+          width: newState.maxWidth,
+          height: newState.maxHeight,
+          quality: newState.quality,
+          format: newState.format,
+          originImageSrc: imageSrcProp,
+        });
+        setImageSrc(result.imageUri)
+        setState(newState);
+        setLoadImage(true);
+      } else {
+        let newState = { ...state };
+        newState.originImageSrc = null;
+        newState.arrayCopiedImages = [];
+        newState = {
+          ...newState,
+          format: 'jpeg',
+          maxHeight: 1000,
+          maxWidth: 1000,
+          cropHeight: 150,
+          cropWidth: 150,
+          maintainAspectRatio: true,
+          basicFilters: undefined
+        };
+        setLoadImage(false);
+        setImageSrc(null);
+        setState(newState);
+      }
+    })()
+  }, [imageSrcProp])
 
 
 
@@ -116,16 +154,15 @@ const ReactImagePickerEditor = memo(({ config = {} }: { config: ImagePickerConf 
     let newState = { ...state };
     let newImageSrc = urlImage.current + base64textString;
     newState.originImageSrc = urlImage.current + base64textString;
-
-    if (config.compressInitial) {
+    console.log(configuration);
+    if (configuration.compressInitial) {
       newState = {
         ...newState,
-        quality: Math.min(config.compressInitial || 92, 100),
+        quality: Math.min(configuration.compressInitial || 92, 100),
         maintainAspectRatio: true,
         format: 'jpeg',
       };
-      console.log(state);
-      let result = await convertImageUsingCanvas(newState.originImageSrc, false, newState, { getDimFromImage: true });
+      let result = await convertImageUsingCanvas(newState.originImageSrc as string, false, newState, { getDimFromImage: true });
       setState(result.state);
       setImageSrc(result.imageUri);
       setLoadImage(true);
@@ -136,13 +173,14 @@ const ReactImagePickerEditor = memo(({ config = {} }: { config: ImagePickerConf 
         newState.arrayCopiedImages = [];
         newState.maxHeight = img.height;
         newState.maxWidth = img.width;
+        newState.format = fileType.current.split('image/')[1];
         newState.arrayCopiedImages.push({
           lastImage: newImageSrc,
           width: img.width,
           height: img.height,
           quality: newState.quality,
-          format: newState.format,
-          originImageSrc: newState.originImageSrc,
+          format: fileType.current.split('image/')[1],
+          originImageSrc: newState.originImageSrc as string,
         });
         setState(newState);
         setImageSrc(newImageSrc);
@@ -159,8 +197,57 @@ const ReactImagePickerEditor = memo(({ config = {} }: { config: ImagePickerConf 
     }
   }, [imageSrc])
 
-  function onOpenEditPanel() {
+  function parseToBase64(imageUrl: string): Promise<{ imageUri: string; state: IState }> {
+    let newState = { ...state };
+    let types = imageUrl.split('.');
+    let type = types[types.length - 1];
+    if (type && (type == 'png' || type == 'jpeg' || type == 'webp')) {
+      type = type;
+    } else {
+      type = 'jpeg';
+    }
+    newState.format = type;
 
+    return new Promise((resolve, reject) => {
+      let img = new Image();
+      img.crossOrigin = 'Anonymous';
+      newState.maxHeight = img.height;
+      newState.maxWidth = img.width;
+
+      img.onload = () => {
+        let canvas = document.createElement('canvas');
+        let ctx: any = canvas.getContext('2d');
+        let ratio = 1.0;
+        canvas.width = img.width * ratio;
+        canvas.height = img.height * ratio;
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        let dataURI = canvas.toDataURL(`image/${type}`, newState.quality);
+        return resolve({
+          dataUri: dataURI,
+          width: canvas.width,
+          height: canvas.height,
+        });
+      };
+      img.onerror = (e: any) => {
+        return reject(e.message || `Error loading the src = ${imageUrl}`)
+      }
+      img.src = imageUrl;
+    }).then((data: any) => {
+      newState = {
+        ...newState,
+        maxHeight: data.height,
+        maxWidth: data.width,
+      };
+      return { imageUri: data.dataUri, state: newState };
+    });
+  }
+
+  function onOpenEditPanel() {
+    setShowEditPanel(true);
+  }
+
+  function onCloseEditPanel(data: any) {
+    setShowEditPanel(false);
   }
 
   function onRemove() {

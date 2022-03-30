@@ -14,13 +14,15 @@ const App = () => {
     height: '250px',
     objectFit: 'contain',
     // aspectRatio: 4 / 3,
-    compressInitial: 92,
+    compressInitial: null,
   };
+
+  const initialImage: string = '/assets/images/8ptAya.webp';
 
   return <div className='container'>
     <Header />
 
-    <ReactImagePickerEditor config={config2} ></ReactImagePickerEditor>
+    <ReactImagePickerEditor imageSrcProp={initialImage} config={config2} ></ReactImagePickerEditor>
 
   </div>
 }
