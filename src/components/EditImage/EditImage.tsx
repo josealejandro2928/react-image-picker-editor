@@ -1,10 +1,12 @@
 
-import React, { memo, useState, useEffect, useRef } from 'react';
+import React, { memo, useState, useEffect, useRef, useMemo } from 'react';
 import { IBasicFilterState, ICacheData, IState } from '../../models/index.models';
 import { ResizeObserver } from 'resize-observer'
 
 import './EditImage.scss';
 import TabContainer, { TabItem } from '../Tab/Tab';
+import useDebounce from '../../Hooks/useDebounce';
+import { convertImageUsingCanvas } from '../../functions/image-processing';
 
 export interface EditImageProps {
   labels: any;
@@ -30,8 +32,12 @@ const EditImage = memo(({ labels = {}, image = '', color = '#1e88e5', initialSta
   const [imageSrc, setImageSrc] = useState<string | null>('')
   const [showCrop, setShowCrop] = useState<boolean>(false);
 
+
   const observer = useRef<ResizeObserver>();
+  const updateStateRef = useRef<number>(0);
   const allFormats = ['webp', 'jpeg', 'png'];
+  // const timeout = useRef<any>(null);
+  // const flag = useRef<any>(false);
 
 
   useEffect(() => {
@@ -42,24 +48,49 @@ const EditImage = memo(({ labels = {}, image = '', color = '#1e88e5', initialSta
     setImageSrc(image)
   }, [image])
 
-  function updateState(values: {
-    quality?: number;
-    maxHeight?: number;
-    maxWidth?: number;
-    cropHeight?: number;
-    cropWidth?: number;
-    maintainAspectRatio?: boolean;
-    format?: string;
-    arrayCopiedImages?: Array<ICacheData>;
-    originImageSrc?: string | null | undefined;
-    basicFilters?: IBasicFilterState;
-  }) {
-    setState({ ...state, ...values });
+
+  async function applyChanges(stateIntance: IState, changeHeight = false) {
+    try {
+      const { state: newState, imageUri } = await convertImageUsingCanvas(state.originImageSrc as string, changeHeight, stateIntance);
+      setImageSrc(imageUri)
+      setState(newState);
+      console.log("Here");
+    } catch (error) {
+      console.log("🚀 ~ file: EditImage.tsx ~ line 73 ~ applyChanges ~ error", error)
+    }
   }
 
-  useEffect(() => {
-    console.log("🚀 ~ file: EditImage.tsx ~ line 63 ~ EditImage ~ state", state)
-  }, [state])
+  async function onUpdateQuality(quality: number) {
+    quality = Math.max(Math.min(quality, 100), 1);
+    const newState: IState = { ...state, quality }
+    setState(newState);
+    try {
+      await applyChanges(newState, false);
+    } catch (error) {
+      console.log("🚀 ~ file: EditImage.tsx ~ line 89 ~ onChangeSize ~ error", error)
+    }
+  }
+
+  async function onChangeSize(value: number, changeHeight = false) {
+    let m = Math.max(Math.min(value, 4000), 32);
+    const newState: IState = { ...state }
+    if (changeHeight) newState.maxHeight = m;
+    else newState.maxWidth = m;
+    setState(newState);
+    try {
+      await applyChanges(newState, changeHeight);
+    } catch (error) {
+      console.log("🚀 ~ file: EditImage.tsx ~ line 89 ~ onChangeSize ~ error", error)
+    }
+  }
+
+  const sizeImage = useMemo(() => {
+    if (imageSrc && imageSrc.length) {
+      return Math.ceil(((3 / 4) * imageSrc.length) / 1024);
+    } else {
+      return '';
+    }
+  }, [imageSrc])
 
 
   return <div className="EditImage">
@@ -107,7 +138,7 @@ const EditImage = memo(({ labels = {}, image = '', color = '#1e88e5', initialSta
 
               <div className='flex-row-start'>
                 <input readOnly={showCrop} disabled={showCrop} className="input-range"
-                  onChange={(e) => { updateState({ quality: e.target.valueAsNumber }) }}
+                  onChange={(e) => (onUpdateQuality(e.target.valueAsNumber))}
                   style={{
                     maxWidth: '100%', width: '100%', color: color
                   }}
@@ -118,6 +149,64 @@ const EditImage = memo(({ labels = {}, image = '', color = '#1e88e5', initialSta
                 />
               </div>
 
+              <div className="item-panel" style={{ display: 'flex', width: '100%', justifyContent: 'space-between' }}>
+                {labels['Max dimensions']}
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <input type="checkbox" checked={state.maintainAspectRatio} onChange={(e) => setState({ ...state, maintainAspectRatio: e.target.checked })}
+                    style={{ color: color }} />
+                  <span className="caption">{labels['aspect-ratio']}</span>
+                </div>
+              </div>
+
+              <div className='flex-row-start' style={{ marginTop: '10px', justifyContent: 'space-between' }}>
+                <div className="form-field" style={{ maxWidth: '48%', width: '48%' }}>
+                  <label>{labels['max-width(px)']}</label>
+                  <input
+                    readOnly={showCrop}
+                    disabled={showCrop}
+                    onChange={(e) => setState({ ...state, maxWidth: +e.target.value })}
+                    onKeyDown={(e) => {
+                      if (e.key == 'Enter') onChangeSize(state.maxWidth, false)
+                    }}
+                    onBlur={(e) => onChangeSize(+e.target.value, false)}
+                    placeholder={labels['max-width(px)']}
+                    value={state.maxWidth}
+                    type="number"
+                    min={0}
+                    max={2000}
+                  />
+                </div>
+
+                <div className="form-field" style={{ maxWidth: '48%', width: '48%' }}>
+                  <label>{labels['max-height(px)']}</label>
+                  <input
+                    readOnly={showCrop}
+                    disabled={showCrop}
+                    onChange={(e) => setState({ ...state, maxHeight: +e.target.value })}
+                    onKeyDown={(e) => {
+                      if (e.key == 'Enter') onChangeSize(state.maxHeight, true)
+                    }}
+                    onBlur={(e) => onChangeSize(+e.target.value, true)}
+                    placeholder={labels['max-height(px)']}
+                    value={state.maxHeight}
+                    type="number"
+                    min={0}
+                    max={2000}
+                  />
+                </div>
+              </div>
+
+              {sizeImage && <p
+                className="caption image-caption"
+                style={{
+                  color: sizeImage > 120 ? '#f44336' : 'unset',
+                  fontWeight: sizeImage > 120 ? '500' : 'unset'
+                }}
+              >
+                size: {sizeImage}Kb &nbsp; {state.format}
+              </p>
+              }
+
             </TabItem>
             <TabItem name="Filters">
             </TabItem>
@@ -127,9 +216,10 @@ const EditImage = memo(({ labels = {}, image = '', color = '#1e88e5', initialSta
         </div>
       </div>
     </div>
-  </div>
+  </div >
 })
 
 
 export default EditImage
+
 

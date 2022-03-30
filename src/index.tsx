@@ -156,7 +156,7 @@ const ReactImagePickerEditor = memo(({ config = {}, imageSrcProp = '', color = '
     let newState = { ...state };
     let newImageSrc = urlImage.current + base64textString;
     newState.originImageSrc = urlImage.current + base64textString;
-    console.log(configuration);
+    // console.log(configuration);
     if (configuration.compressInitial) {
       newState = {
         ...newState,

@@ -204,4 +204,19 @@
       transform: scale(.95);
     }
   }
+
+  .caption {
+    font-size: 11px;
+    margin-top: 2px !important;
+    margin-bottom: 0px !important;
+  }
+
+  button[disabled] {
+    filter: brightness(.5);
+    cursor: not-allowed;
+  }
+
+  button:active {
+    transform: scale(.95);
+  }
 }

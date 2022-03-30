@@ -45,6 +45,7 @@ export const convertImageUsingCanvas = (
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
       let type = state.format;
       var dataURI = canvas.toDataURL(`image/${type}`, quality);
+      // console.log("🚀 ~ file: image-processing.ts ~ line 48 ~ returnnewPromise ~ quality", quality)
       resolve({
         dataUri: dataURI,
         width: canvas.width,
