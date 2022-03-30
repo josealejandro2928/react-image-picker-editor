@@ -5,8 +5,8 @@ import { ResizeObserver } from 'resize-observer'
 
 import './EditImage.scss';
 import TabContainer, { TabItem } from '../Tab/Tab';
-import useDebounce from '../../Hooks/useDebounce';
 import { convertImageUsingCanvas } from '../../functions/image-processing';
+import Input from '../Input/Input';
 
 export interface EditImageProps {
   labels: any;
@@ -137,7 +137,7 @@ const EditImage = memo(({ labels = {}, image = '', color = '#1e88e5', initialSta
               </div>
 
               <div className='flex-row-start'>
-                <input readOnly={showCrop} disabled={showCrop} className="input-range"
+                {/* <input readOnly={showCrop} disabled={showCrop} className="input-range"
                   onChange={(e) => (onUpdateQuality(e.target.valueAsNumber))}
                   style={{
                     maxWidth: '100%', width: '100%', color: color
@@ -146,7 +146,18 @@ const EditImage = memo(({ labels = {}, image = '', color = '#1e88e5', initialSta
                   min={1}
                   max={100}
                   value={state.quality}
-                />
+                /> */}
+                <Input readOnly={showCrop} disabled={showCrop}
+
+                  className="input-range"
+                  onChangedDelayed={onUpdateQuality}
+                  style={{
+                    maxWidth: '100%', width: '100%', color: color
+                  }}
+                  type="range"
+                  min={1}
+                  max={100}
+                  value={state.quality} />
               </div>
 
               <div className="item-panel" style={{ display: 'flex', width: '100%', justifyContent: 'space-between' }}>
@@ -161,37 +172,30 @@ const EditImage = memo(({ labels = {}, image = '', color = '#1e88e5', initialSta
               <div className='flex-row-start' style={{ marginTop: '10px', justifyContent: 'space-between' }}>
                 <div className="form-field" style={{ maxWidth: '48%', width: '48%' }}>
                   <label>{labels['max-width(px)']}</label>
-                  <input
+                  <Input
                     readOnly={showCrop}
                     disabled={showCrop}
-                    onChange={(e) => setState({ ...state, maxWidth: +e.target.value })}
-                    onKeyDown={(e) => {
-                      if (e.key == 'Enter') onChangeSize(state.maxWidth, false)
-                    }}
-                    onBlur={(e) => onChangeSize(+e.target.value, false)}
                     placeholder={labels['max-width(px)']}
                     value={state.maxWidth}
                     type="number"
                     min={0}
                     max={2000}
+                    onInputChangedEnd={(value: number) => { onChangeSize(value, false) }}
                   />
                 </div>
 
+
                 <div className="form-field" style={{ maxWidth: '48%', width: '48%' }}>
                   <label>{labels['max-height(px)']}</label>
-                  <input
+                  <Input
                     readOnly={showCrop}
                     disabled={showCrop}
-                    onChange={(e) => setState({ ...state, maxHeight: +e.target.value })}
-                    onKeyDown={(e) => {
-                      if (e.key == 'Enter') onChangeSize(state.maxHeight, true)
-                    }}
-                    onBlur={(e) => onChangeSize(+e.target.value, true)}
                     placeholder={labels['max-height(px)']}
                     value={state.maxHeight}
                     type="number"
                     min={0}
                     max={2000}
+                    onInputChangedEnd={(value: number) => { onChangeSize(value, true) }}
                   />
                 </div>
               </div>
