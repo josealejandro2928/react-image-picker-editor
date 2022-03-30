@@ -7,6 +7,7 @@ import labelEn from './i18n/en.json';
 import labelFr from './i18n/fr.json';
 import labelDe from './i18n/de.json';
 import { convertImageUsingCanvas } from "./functions/image-processing";
+import EditImage from "./components/EditImage/EditImage";
 export * from './models/index.models';
 
 const initialConfig: ImagePickerConf = {
@@ -18,7 +19,8 @@ const initialConfig: ImagePickerConf = {
   hideAddBtn: false,
 }
 
-const ReactImagePickerEditor = memo(({ config = {}, imageSrcProp = '' }: { config: ImagePickerConf, imageSrcProp?: string }) => {
+const ReactImagePickerEditor = memo(({ config = {}, imageSrcProp = '', color = '#1e88e5' }:
+  { config: ImagePickerConf, imageSrcProp?: string, color?: string; }) => {
 
   const [state, setState] = useState<IState>({
     quality: 92,
@@ -49,7 +51,7 @@ const ReactImagePickerEditor = memo(({ config = {}, imageSrcProp = '' }: { confi
   }, [config])
 
   useEffect(() => {
-    console.log("state", state);
+    // console.log("state", state);
   }, [state])
 
   useEffect(() => {
@@ -248,6 +250,11 @@ const ReactImagePickerEditor = memo(({ config = {}, imageSrcProp = '' }: { confi
 
   function onCloseEditPanel(data: any) {
     setShowEditPanel(false);
+    if (data) {
+      setState(data.state)
+      setImageSrc(data.imageSrc);
+      // this.$imageChanged.next(this.imageSrc);
+    }
   }
 
   function onRemove() {
@@ -377,6 +384,10 @@ const ReactImagePickerEditor = memo(({ config = {}, imageSrcProp = '' }: { confi
         </div>
       </div>
     }
+    {showEditPanel &&
+      <EditImage saveUpdates={onCloseEditPanel}
+        labels={labels} color={color} image={imageSrc}
+        initialState={state}></EditImage>}
   </div >
 })
 

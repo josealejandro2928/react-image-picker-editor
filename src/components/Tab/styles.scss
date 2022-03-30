@@ -1,0 +1,72 @@
+.tab-pp {
+  .header {
+    display: flex;
+    padding: 0px 8px;
+    box-sizing: border-box;
+    justify-content: flex-start;
+    align-items: center;
+    overflow-x: auto;
+
+    .itemlabel {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: .5rem 0.65rem;
+      min-height: 48px;
+      box-sizing: border-box;
+      white-space: nowrap;
+      text-transform: capitalize;
+      cursor: pointer;
+      opacity: 0.7;
+      font-size: inherit;
+      border: unset;
+
+
+      &[disabled] {
+        opacity: .4;
+        cursor: not-allowed;
+      }
+
+      &.simple {
+        position: relative;
+        opacity: 1;
+      }
+
+      &.bottomLine {
+        position: relative;
+        opacity: 1;
+
+        div {
+          position: absolute;
+          width: 100%;
+          bottom: 0;
+          height: 3px;
+        }
+      }
+
+      &.button {
+        position: relative;
+        opacity: 1;
+        color: inherit;
+        border-radius: 4px;
+      }
+    }
+  }
+
+  .body {
+    position: relative;
+    height: auto;
+    width: 100%;
+    overflow: hidden;
+
+    .body-content {
+      position: absolute;
+      top: 0;
+      left: 0;
+      visibility: hidden;
+      width: 100%;
+      height: auto;
+      transform: none;
+    }
+  }
+}
