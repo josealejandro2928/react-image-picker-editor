@@ -1,7 +1,7 @@
 {
   "name": "react-image-picker-editor",
-  "version": "1.0.2",
-  "description": "React tabs component for organizing content into separate views where only one view can be visible at a time.",
+  "version": "1.0.0",
+  "description": "React library for the selection, edition and compression of images in png, jpeg and webp formats.",
   "author": "josealejandro2928",
   "license": "MIT",
   "repository": "josealejandro2928/react-image-picker-editor",

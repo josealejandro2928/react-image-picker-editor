@@ -1,154 +1,182 @@
-# react-image-picker-editor
+# ReactImagePickerEditor
 
-React tabs component for organizing content into separate views where only one view can be visible at a time.
-When the list of tab labels exceeds the width of the header, pagination controls appear to let the user scroll left and right across the labels.
-The active tab may be set using the activeIndex input or when the user selects one of the tab labels in the header.
+React library for the selection, edition and compression of images in png, jpeg and webp formats
+This package is made completely with html and css without any extra components or npm packages.
+It's based in functional components based in hooks, for optimization were used memo, useMemo and useCalback for avoiding any extra-renders.
+This package is the React version of **[ngp-image-picker](https://www.npmjs.com/package/ngp-image-picker)**
 
-![1](https://react-image-picker-editor.surge.sh/images/ex-1.png)
-![1](https://react-image-picker-editor.surge.sh/images/ex-2.png)
+### Description
 
-## Install
+In many projects it is of interest to upload images for a backend, and sometimes we have to consult other programs for the compression of images and the change of format to improve the performance of the page. With `ReactImagePickerEditor` this is possible in real time with for each image that you want to upload.
 
-```bash
-npm install --save react-image-picker-editor
+### Installation
+
+```sh
+npm i react-image-picker-editor --save
 ```
 
-or
+or yarn
 
-```bash
+```sh
 yarn add react-image-picker-editor
 ```
 
-## Usage
+### External Resource
 
-The **react-image-picker-editor** provide a two component to recreate the diferent views by dividing content into different tabs.
-You have **TabContainer** that is the wrapper of **TabItem** components.
-**You must import the styles of these components**
+`ReactImagePickerEditor`, for use the functionality of cropping images, the ResizeObserver api is used
+The ResizeObserver interface reports changes to the dimensions of an Element's content or border box, or the bounding box of an SVGElement.
+Install the package
 
-```tsx
-import 'react-image-picker-editor/dist/index.css';
+```sh
+npm i resize-observer --save
 ```
 
-### 1. Simple basic usage
+### Usages
 
-```tsx
+You must import the following where you will use it:
+
+``` tsx
 ...
-import TabContainer, { TabItem } from 'react-image-picker-editor';
-import 'react-basic-stepper/dist/index.css';
+import ReactImagePickerEditor, { ImagePickerConf } from 'react-image-picker-editor';
+import 'react-image-picker-editor/dist/index.css'
 ...
-<TabContainer color='#3949ab' borderLine >
-    <TabItem name='tab1'>
-      <h3>Content1</h3>
-    </TabItem>
-    <TabItem name='tab2'>
-      <h3>Content2</h3>
-    </TabItem>
-    <TabItem name='tab3'>
-      <h2>Content3</h2>
-    </TabItem>
-</TabContainer>
+  const config2: ImagePickerConf = {
+    borderRadius: '8px',
+    language: 'en',
+    width: '330px',
+    height: '250px',
+    objectFit: 'contain',
+    compressInitial: null,
+  };
+  // const initialImage: string = '/assets/images/8ptAya.webp';
+  const initialImage = '';
+
+ return <div>
+       ...
+        < ReactImagePickerEditor
+            config={config2}
+            imageSrcProp={initialImage}
+            imageChanged={(newDataUri: any) => { setImageSrc(newDataUri) }} />
+        </div>
+      ...
 ```
 
-![1](https://react-image-picker-editor.surge.sh/images/ex-1.png)
-
-You can set edit the header changing the backgroundColor, color, active-label style and other properties. Also you can pass icon to render with the name of the tabs
+### Here is an example with different configurations
 
 ```tsx
-...
-import TabContainer, { TabItem } from 'react-image-picker-editor';
-import 'react-basic-stepper/dist/index.css';
-...
-<TabContainer indicatorStyle="button" color='#1976d2' backgroundColor='#323232' fontColor='#fff'>
-  <TabItem icon={<i style={{ marginRight: '4px' }} className="fa-solid fa-house"></i>} name='home'>
-    <h3>Content1</h3>
-  </TabItem>
-  <TabItem icon={<i style={{ marginRight: '4px' }} className="fa-solid fa-gear"></i>} name='settings'>
-    <h3>Content2</h3>
-  </TabItem>
-
-  <TabItem icon={<i style={{ marginRight: '4px' }} className="fa-solid fa-photo-film"></i>} name='images'>
-    <h2>Content3</h2>
-  </TabItem>
-</TabContainer>
+<h2>Basic ussage</h2>
+  <ReactImagePickerEditor config={config2}/>
+<br />
+<h2>Initial Image , a callback to get the updates of the dataUri image </h2>
+<ReactImagePickerEditor
+      config={config2}
+      imageSrcProp={initialImage}
+      imageChanged={(newDataUri: any) => { setImageSrc(newDataUri) }} />
 ```
 
-![1](https://react-image-picker-editor.surge.sh/images/ex-2.png)
+![Image 1](https://ngp-image-picker.surge.sh/assets/images/1.png)
 
-### 2. Lazy Loading, initial active tab, different transition speed and a disabled tab
+### More about the component
 
-```tsx
-<TabContainer lazy activeIndex={1} transitionMs={750} color='#3949ab' borderLine >
-  <TabItem name='tab1'>
-    <div style={{ padding: '1rem' }}>
-      <iframe width="800" height="400" src="https://www.youtube.com/embed/MNX7HgcWqHc" title="YouTube video player"
-         allow="accelerometer; autoplay" allowFullScreen></iframe>
-    </div>
-  </TabItem>
-  <TabItem name='tab2'>
-    <p>
-      Lorem ipsum dolor sit, amet consectetur adipisicing elit. Consequuntur,
-       doloremque itaque ipsam ducimus sunt minus,
-      nemo veniam error, neque corporis architecto in laudantium unde!
-      Assumenda consequuntur eos magnam asperiores? Animi!
-    </p>
-  </TabItem>
-  <TabItem name='tab3' >
-    <h2>Content3</h2>
-    <img alt='example' src="/full.jpg" width={800} />
-  </TabItem>
-  <TabItem name='tab4' disabled >
-    <h2>Content3</h2>
-    <img alt='big' src="/full-2.jpg" width={800} />
-  </TabItem>
-</TabContainer>
-```
+The `ReactImagePickerEditor` component has a setting to change the width, length, the aspectRatio, and objectFit properti of the loaded image. In addition to the language ( en | es | fr | de ). It also has an initial compression ratio option that by default is null.
+It is important to note that the quality factor for image compression is only for formats such as: jpeg and webp.
+The interface looks like this:
 
-![1](https://react-image-picker-editor.surge.sh/images/ex-3.png)
-
-### 3. Cascade Usage
-
-You can use this component nested to another to create a cascading effect.
-![1](https://react-image-picker-editor.surge.sh/images/ex-4.png)
-
-The **TabContainer** component has props to customize it. We've seen so far the main capabilities as:
-
-1. Possibility to change the color, background color, active style and basic style of the header.
-2. We have a way to perform lazy loading function between tabs.
-3. Change of the animation of the transition time between the tabs.
-4. Enabling or disabling a specific tab.
-5. Setting the active tab.
-
-```ts
-export interface TabContainerProps {
-  activeIndex?: number; // Set the current active tab, default index 0.
-  backgroundColor?: string // Set the background color for the tab header
-  color?: string // Set the color of the active tab.
-  indicatorStyle?: 'simple' | 'bottomLine' | 'button' // Enable diferent way to present the labels in the header of the tab
-  onTabChange?: Function, // Callback function activated for each change of the current active tab
-  lazy?: boolean; // Enables lazy loading, allow to render only the dom the active tab
-  transitionMs?: number;
-  borderLine?: boolean; // Enables border-botton in the header of tabs
-  fontColor?: string; // Useful when using a different background color in the header, and you want to change the font color in it.
+```typescript
+export interface ImagePickerConf {
+  width?: string;
+  height?: string;
+  borderRadius?: string;
+  aspectRatio?: number | null;
+  objectFit?: 'cover' | 'contain' | 'fill' | 'revert' | 'scale-down';
+  compressInitial?: number; // Range from [1-100]
+  language?: string;
+  hideDeleteBtn?: boolean;
+  hideDownloadBtn?: boolean;
+  hideEditBtn?: boolean;
+  hideAddBtn?: boolean;
 }
 ```
 
-```ts
-export interface TabItemProps {
-   name: string; // The unique identificator of the tab, that it is the label rendered in the header of the component
-   disabled?: boolean // Allow to disabled the navigation/clicking to TabItem
-}
-```
+| name   |      type      |  description | default|
+|----------|:-------------:|:------|------:|
+| width |  string | Set the specific width of the div that contain the image uploaded | null |
+| height |    string   |   Set the specific height of the div that contain the image uploaded | null|
+| borderRadius | string |    Set the property for the holder of the image and the image |null|
+| aspectRatio | string |    This apply a specifict aspect ratio to the div, use this with only setting a width and you can archive the ratio that you want it |null |
+| objectFit | string | Default is 'cover', but if 'contain' is used the content will be scaled to maintain its aspect ratio while fitting inside the element's content box. |'cover'|
+| compressInitial | number | Quality factor applied to images with format: "webp, jpeg"  |null|
+| language | string | set the translations object |'en'|
+| hideDeleteBtn | boolean | hide the botton |false|
+| hideDownloadBtn | boolean | hide the botton |false|
+| hideEditBtn | boolean | hide the botton |false|
+| hideAddBtn | boolean | hide the botton |false|
 
-### [Demo](https://react-image-picker-editor.surge.sh/)
+A basic configuration object with compression applied would be:
 
-### Related Pakages
+```typescript
+  ...
+  config1: ImagePickerConf = {
+    language: 'en',
+    compressInitial: 90
+  };
+  ...
+ ```
 
-#### 1. [react-hook-modal](https://www.npmjs.com/package/react-hook-modal)
+ The above example means that once an image is loaded from the file system, a compression quality is applied to it with a value of 0.9, and the resulting image will be reformatted as a jpeg.
 
-#### 2. [react-basic-stepper](https://www.npmjs.com/package/react-basic-stepper)
+### Editing panel
 
-#### 3. [ngp-image-picker](https://www.npmjs.com/package/ngp-image-picker)
+Once you have selected an image, 4 buttons are enabled below the image:
 
-## License
+1. load a new image.
+2. Open the editing panel.
+3. Download the image.
+4. Delete the image.
 
-MIT © [josealejandro2928](https://github.com/josealejandro2928)
+In the edit panel, you can change the quality ratio to compress the file size (in kb). Also changing width and height in px keeping aspect ratio or not, is selectable. You can change the image format as you wish, the options are 'png', 'webp','jpeg'.
+The 'Png' format is not affected by changing the quality ratio.
+Another capability is that you can crop the image by simply dragging and dropping the cropping component. And by clicking on the crop button.
+
+**I just added a new tab for applying filters**. Now you can not only crop, compress and reformat your image, but you have new features like:
+
+1. Contrast level
+2. Brigthness level
+3. Gray
+4. Sepia
+5. Saturation
+6. Blur
+
+🔥🔥🔥🔥🔥 You can have in your website a component like the instagram or linkedin for editing your images. 🔥🔥🔥🔥🔥
+
+![Image 1](https://ngp-image-picker.surge.sh/assets/images/tab-section.png)
+![Image 2](https://ngp-image-picker.surge.sh/assets/images/2.png)
+
+### Control section
+
+![Image 3](https://ngp-image-picker.surge.sh/assets/images/n-1.png)
+![Image 3](https://ngp-image-picker.surge.sh/assets/images/n-2.png)
+![Image 3](https://ngp-image-picker.surge.sh/assets/images/n-3.png)
+![Image 3](https://ngp-image-picker.surge.sh/assets/images/n-4.png)
+
+### Croping images
+
+![Image 4](https://ngp-image-picker.surge.sh/assets/images/5.png)
+
+#### [DEMO](https://ngp-image-picker.surge.sh/)
+
+##### Angular version
+
+#### [ngp-image-picker](https://www.npmjs.com/package/ngp-image-picker)
+
+##### More useful Npm packages
+
+#### 1. [ngp-lazy-load](https://www.npmjs.com/package/ngp-lazy-load)
+
+#### 2. [ngp-material-rating](https://www.npmjs.com/package/ngp-material-rating)
+
+#### 3. [react-hook-modal](https://www.npmjs.com/package/react-hook-modal)
+
+#### 4. [react-basic-stepper](https://www.npmjs.com/package/react-basic-stepper)
+
+#### 5. [tabs-react-component](https://www.npmjs.com/package/tabs-react-component)
