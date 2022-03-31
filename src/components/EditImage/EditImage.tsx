@@ -7,6 +7,7 @@ import './EditImage.scss';
 import TabContainer, { TabItem } from '../Tab/Tab';
 import { convertImageUsingCanvas, dragElement, saveState } from '../../functions/image-processing';
 import Input from '../Input/Input';
+import BasicFilter from '../BasicFilters/BasicFilter';
 
 export interface EditImageProps {
   labels: any;
@@ -244,6 +245,20 @@ const EditImage = memo(({ labels = {}, image = '', color = '#1e88e5', initialSta
     }
   }
 
+  async function onChangeFilters(data: IBasicFilterState) {
+    try {
+      let newState: IState = _cloneObject(state);
+      if (!newState.basicFilters) {
+        newState.basicFilters = data;
+      } else {
+        newState.basicFilters = { ...newState.basicFilters, ...data };
+      }
+      await applyChanges(newState, false);
+    } catch (e) {
+      console.log("🚀 ~ file: EditImage.tsx ~ line 259 ~ onChangeFilters ~ e", e)
+    }
+  }
+
 
 
   const sizeImage = useMemo(() => {
@@ -295,7 +310,7 @@ const EditImage = memo(({ labels = {}, image = '', color = '#1e88e5', initialSta
         </div>
 
         <div className="control-panel">
-          <TabContainer borderLine>
+          <TabContainer lazy borderLine>
             <TabItem name="Basic">
               <div style={{ display: 'flex', width: '100%', justifyContent: 'space-between' }}>
                 <p className="item-panel">{labels['Quality']}</p>
@@ -304,7 +319,6 @@ const EditImage = memo(({ labels = {}, image = '', color = '#1e88e5', initialSta
 
               <div className='flex-row-start'>
                 <Input readOnly={showCrop} disabled={showCrop}
-
                   className="input-range"
                   onChangedDelayed={onUpdateQuality}
                   onChangedValue={(value: number) => { setState({ ...state, quality: value }) }}
@@ -414,6 +428,7 @@ const EditImage = memo(({ labels = {}, image = '', color = '#1e88e5', initialSta
               }
             </TabItem>
             <TabItem name="Filters">
+              <BasicFilter color={color} labels={labels} initialState={state.basicFilters} changeFilter={onChangeFilters}></BasicFilter>
             </TabItem>
           </TabContainer>
           <button
