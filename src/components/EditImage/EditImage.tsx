@@ -62,7 +62,7 @@ const EditImage = memo(({ labels = {}, image = '', color = '#1e88e5', initialSta
       const { state: newState, imageUri } = await convertImageUsingCanvas(state.originImageSrc as string, changeHeight, stateIntance);
       setImageSrc(imageUri)
       setState(newState);
-      console.log("Here", newState);
+      // console.log("Here", newState);
     } catch (error) {
       console.log("🚀 ~ file: EditImage.tsx ~ line 73 ~ applyChanges ~ error", error)
     }
@@ -218,6 +218,30 @@ const EditImage = memo(({ labels = {}, image = '', color = '#1e88e5', initialSta
     setShowCrop(false);
     if (saveChanges) saveUpdates({ state: state, imageSrc: imageSrc });
     else saveUpdates(null);
+  }
+
+  async function onRestore() {
+    try {
+      let newState: IState = _cloneObject(state);
+      if (newState.arrayCopiedImages.length > 1) {
+        newState.arrayCopiedImages.pop();
+        let newValue = newState.arrayCopiedImages[newState.arrayCopiedImages.length - 1];
+        newState = {
+          ...state,
+          arrayCopiedImages: newState.arrayCopiedImages,
+          maxHeight: newValue.height,
+          maxWidth: newValue.width,
+          quality: newValue.quality,
+          format: newValue.format,
+          originImageSrc: newValue.originImageSrc,
+          basicFilters: newValue.basicFilters as IBasicFilterState,
+        };
+        setState(newState);
+        setImageSrc(newValue.lastImage);
+      }
+    } catch (e) {
+      console.log('🚀 ~ file: edit-image.component.ts ~ line 126 ~ EditImageComponent ~ onRestore ~ e', e);
+    }
   }
 
 
@@ -392,6 +416,15 @@ const EditImage = memo(({ labels = {}, image = '', color = '#1e88e5', initialSta
             <TabItem name="Filters">
             </TabItem>
           </TabContainer>
+          <button
+            title={labels['Undo']}
+            disabled={state.arrayCopiedImages.length <= 1}
+            style={{ position: 'absolute', right: '10px', top: '30px' }}
+            className="icon-btn"
+            onClick={onRestore}
+          >
+            <span className="material-icons"> refresh </span>
+          </button>
           <div className='flex-row-start' style={{ marginTop: '10px', justifyContent: 'space-between', alignItems: 'center' }}>
             <button className="save-btn" onClick={() => { onCloseEditPanel(true) }}>{labels['Save']}</button>
             {sizeImage && <p

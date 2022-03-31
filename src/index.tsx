@@ -369,7 +369,7 @@ const ReactImagePickerEditor = memo(({ config = {}, imageSrcProp = '', color = '
             <a id="download-img"
               title={labels['Download the image']}
               href={imageSrc as string}
-              download={imageName}
+              download={imageName.current}
             >
               <span className="material-icons">cloud_download</span>
             </a>
