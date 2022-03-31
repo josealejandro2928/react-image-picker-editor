@@ -19,8 +19,8 @@ const initialConfig: ImagePickerConf = {
   hideAddBtn: false,
 }
 
-const ReactImagePickerEditor = memo(({ config = {}, imageSrcProp = '', color = '#1e88e5' }:
-  { config: ImagePickerConf, imageSrcProp?: string, color?: string; }) => {
+const ReactImagePickerEditor = memo(({ config = {}, imageSrcProp = '', color = '#1e88e5', imageChanged = () => { } }:
+  { config: ImagePickerConf, imageSrcProp?: string, color?: string; imageChanged?: Function; }) => {
 
   const [state, setState] = useState<IState>({
     quality: 92,
@@ -50,9 +50,6 @@ const ReactImagePickerEditor = memo(({ config = {}, imageSrcProp = '', color = '
     processConfig();
   }, [config])
 
-  // useEffect(() => {
-  //   console.log("state en elparent ", state);
-  // }, [state])
 
   useEffect(() => {
     (async () => {
@@ -156,7 +153,6 @@ const ReactImagePickerEditor = memo(({ config = {}, imageSrcProp = '', color = '
     let newState = { ...state };
     let newImageSrc = urlImage.current + base64textString;
     newState.originImageSrc = urlImage.current + base64textString;
-    // console.log(configuration);
     if (configuration.compressInitial) {
       newState = {
         ...newState,
@@ -167,6 +163,7 @@ const ReactImagePickerEditor = memo(({ config = {}, imageSrcProp = '', color = '
       let result = await convertImageUsingCanvas(newState.originImageSrc as string, false, newState, { getDimFromImage: true });
       setState(result.state);
       setImageSrc(result.imageUri);
+      imageChanged(result.imageUri);
       setLoadImage(true);
     } else {
       let img = document.createElement('img');
@@ -186,6 +183,7 @@ const ReactImagePickerEditor = memo(({ config = {}, imageSrcProp = '', color = '
         });
         setState(newState);
         setImageSrc(newImageSrc);
+        imageChanged(newImageSrc);
         setLoadImage(true);
       };
     }
@@ -253,13 +251,14 @@ const ReactImagePickerEditor = memo(({ config = {}, imageSrcProp = '', color = '
     if (data) {
       setState(data.state)
       setImageSrc(data.imageSrc);
-      // this.$imageChanged.next(this.imageSrc);
+      imageChanged(data.imageSrc);
     }
   }
 
   function onRemove() {
     setImageSrc(null);
     setLoadImage(false);
+    imageChanged(null);
     const newState: IState = {
       ...state,
       originImageSrc: '',

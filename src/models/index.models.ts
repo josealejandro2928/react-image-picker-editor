@@ -3,7 +3,7 @@ export interface ImagePickerConf {
   height?: string;
   borderRadius?: string;
   aspectRatio?: number | null;
-  objectFit?: 'cover' | 'contain' | 'fill' | 'revert' | 'scale-down';
+  objectFit?: "cover" | "contain" | "fill" | "revert" | "scale-down";
   compressInitial?: number | undefined | null;
   language?: string;
   hideDeleteBtn?: boolean;
