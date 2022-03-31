@@ -4,24 +4,26 @@ import { useState, useEffect } from 'react';
 interface InputProps extends React.InputHTMLAttributes<any> {
   onInputChangedEnd?: Function
   onChangedDelayed?: Function
+  onChangedValue?: Function
   delayMs?: number
 }
 
 const Input = memo((props: React.InputHTMLAttributes<any> | InputProps) => {
 
-  const { onInputChangedEnd, onChangedDelayed, delayMs, ...restProps } = props as any;
+  const { onInputChangedEnd, onChangedDelayed, onChangedValue, delayMs, ...restProps } = props as any;
   const [state, setState] = useState<any>(props.value);
   const timerRef = useRef<any>();
   const mountRef = useRef<boolean>(true);
   const flagRef = useRef<boolean>(false);
 
-  useEffect(() => {
-    if (['checkbox', 'radio'].includes(props.type as string)) {
-      setState(props.checked);
-    } else {
-      setState(props.value);
-    }
-  }, [props.value])
+  // useEffect(() => {
+  //   if (['checkbox', 'radio'].includes(props.type as string)) {
+  //     setState(props.checked);
+  //   } else {
+  //     setState(props.value);
+  //     console.log("Here in the prop")
+  //   }
+  // }, [props.value])
 
   useEffect(() => {
     if (!onChangedDelayed) return;
@@ -29,6 +31,7 @@ const Input = memo((props: React.InputHTMLAttributes<any> | InputProps) => {
       mountRef.current = false;
       return;
     }
+
     if (flagRef.current) {
       return;
     }
@@ -48,8 +51,11 @@ const Input = memo((props: React.InputHTMLAttributes<any> | InputProps) => {
   function changeValue(e: any) {
     if (['checkbox', 'radio'].includes(props.type as string)) {
       setState(e.target.checked)
+      onChangedValue && onChangedValue(e.target.checked);
+
     } else {
       setState(e.target.value)
+      onChangedValue && onChangedValue(e.target.value);
     }
   }
 
@@ -57,7 +63,7 @@ const Input = memo((props: React.InputHTMLAttributes<any> | InputProps) => {
     <React.Fragment>
       {
         onInputChangedEnd && <input {...restProps} className={restProps?.className} style={restProps.style}
-          value={state}
+          value={props.value}
           onChange={changeValue}
           onBlur={(e) => { onInputChangedEnd(e.target.value) }}
           onKeyDown={(e) => {
@@ -67,7 +73,7 @@ const Input = memo((props: React.InputHTMLAttributes<any> | InputProps) => {
       }
       {
         !onInputChangedEnd && <input {...restProps} className={restProps?.className} style={restProps.style}
-          value={state}
+          value={props.value}
           onChange={changeValue}
         />
       }

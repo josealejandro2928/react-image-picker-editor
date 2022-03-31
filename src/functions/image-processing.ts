@@ -55,8 +55,7 @@ export const convertImageUsingCanvas = (
   }).then((data: any) => {
     state.maxHeight = data.height;
     state.maxWidth = data.width;
-    saveState(state, data.dataUri);
-    return { imageUri: data.dataUri, state };
+    return { imageUri: data.dataUri, state: saveState(state, data.dataUri) };
   });
 
   function processFilter(data: any) {
@@ -177,7 +176,7 @@ export const dragElement = (element: any) => {
   }
 };
 
-export const saveState = (state: IState, lastImage?: string) => {
+export const saveState = (state: IState, lastImage?: string): IState => {
   if (state.arrayCopiedImages.length <= MAX_BUFFER_UNDO_MEMORY) {
     state.arrayCopiedImages.push({
       lastImage: lastImage as any,
@@ -199,4 +198,5 @@ export const saveState = (state: IState, lastImage?: string) => {
       basicFilters: state.basicFilters,
     };
   }
+  return JSON.parse(JSON.stringify(state));
 };

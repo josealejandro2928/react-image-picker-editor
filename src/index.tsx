@@ -50,9 +50,9 @@ const ReactImagePickerEditor = memo(({ config = {}, imageSrcProp = '', color = '
     processConfig();
   }, [config])
 
-  useEffect(() => {
-    // console.log("state", state);
-  }, [state])
+  // useEffect(() => {
+  //   console.log("state en elparent ", state);
+  // }, [state])
 
   useEffect(() => {
     (async () => {
@@ -191,7 +191,7 @@ const ReactImagePickerEditor = memo(({ config = {}, imageSrcProp = '', color = '
     }
   }
 
-  const calculateSize = useMemo(() => () => {
+  const sizeImage = useMemo(() => {
     if (imageSrc && imageSrc.length) {
       return Math.ceil(((3 / 4) * imageSrc.length) / 1024);
     } else {
@@ -322,16 +322,16 @@ const ReactImagePickerEditor = memo(({ config = {}, imageSrcProp = '', color = '
           </div>
           <input ref={imagePicker} type="file" style={{ "display": "none" }} id={'filePicker-' + uuidFilePicker} onChange={handleFileSelect} />
         </div>
-        {calculateSize() &&
+        {sizeImage &&
           <p
             className="caption image-caption"
             style={{
-              color: calculateSize() > 120 ? '#f44336' : 'unset',
-              fontWeight: calculateSize() > 120 ? '500' : 'unset'
+              color: sizeImage > 120 ? '#f44336' : 'unset',
+              fontWeight: sizeImage > 120 ? '500' : 'unset'
 
             }}
           >
-            size: {calculateSize()}Kb &nbsp; {state.format}
+            size: {sizeImage}Kb &nbsp; {state.format}
           </p>}
 
 

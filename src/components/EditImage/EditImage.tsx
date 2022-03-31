@@ -5,7 +5,7 @@ import { ResizeObserver } from 'resize-observer'
 
 import './EditImage.scss';
 import TabContainer, { TabItem } from '../Tab/Tab';
-import { convertImageUsingCanvas } from '../../functions/image-processing';
+import { convertImageUsingCanvas, dragElement, saveState } from '../../functions/image-processing';
 import Input from '../Input/Input';
 
 export interface EditImageProps {
@@ -36,9 +36,6 @@ const EditImage = memo(({ labels = {}, image = '', color = '#1e88e5', initialSta
   const observer = useRef<ResizeObserver>();
   const updateStateRef = useRef<number>(0);
   const allFormats = ['webp', 'jpeg', 'png'];
-  // const timeout = useRef<any>(null);
-  // const flag = useRef<any>(false);
-
 
   useEffect(() => {
     setState(JSON.parse(JSON.stringify({ ...state, ...initialState })));
@@ -48,13 +45,24 @@ const EditImage = memo(({ labels = {}, image = '', color = '#1e88e5', initialSta
     setImageSrc(image)
   }, [image])
 
+  useEffect(() => {
+    // console.log(state);
+  }, [state])
+
+  useEffect(() => {
+    onCropStateChange(showCrop);
+    return () => {
+      clearCroperObservables();
+    }
+  }, [showCrop])
+
 
   async function applyChanges(stateIntance: IState, changeHeight = false) {
     try {
       const { state: newState, imageUri } = await convertImageUsingCanvas(state.originImageSrc as string, changeHeight, stateIntance);
       setImageSrc(imageUri)
       setState(newState);
-      console.log("Here");
+      console.log("Here", newState);
     } catch (error) {
       console.log("🚀 ~ file: EditImage.tsx ~ line 73 ~ applyChanges ~ error", error)
     }
@@ -62,27 +70,157 @@ const EditImage = memo(({ labels = {}, image = '', color = '#1e88e5', initialSta
 
   async function onUpdateQuality(quality: number) {
     quality = Math.max(Math.min(quality, 100), 1);
+    console.log("🚀 ~ file: EditImage.tsx ~ line 73 ~ onUpdateQuality ~ quality", quality)
     const newState: IState = { ...state, quality }
     setState(newState);
     try {
       await applyChanges(newState, false);
     } catch (error) {
-      console.log("🚀 ~ file: EditImage.tsx ~ line 89 ~ onChangeSize ~ error", error)
+      console.log("onUpdateQuality ~ error", error)
     }
   }
 
   async function onChangeSize(value: number, changeHeight = false) {
     let m = Math.max(Math.min(value, 4000), 32);
     const newState: IState = { ...state }
-    if (changeHeight) newState.maxHeight = m;
-    else newState.maxWidth = m;
+
+    if (changeHeight) {
+      if (newState.maxHeight === m) return;
+      newState.maxHeight = m;
+    }
+    else {
+      if (newState.maxWidth === m) return;
+      newState.maxWidth = m;
+    }
     setState(newState);
     try {
       await applyChanges(newState, changeHeight);
     } catch (error) {
-      console.log("🚀 ~ file: EditImage.tsx ~ line 89 ~ onChangeSize ~ error", error)
+      console.log("onChangeSize ~ error", error)
     }
   }
+
+  async function onChangeFormat(e: any) {
+    const newState: IState = { ...state, format: e.target.value }
+    try {
+      setState(newState);
+      await applyChanges(newState, false);
+    } catch (error) {
+      console.log("onChangeFormat ~ error", error)
+    }
+  }
+
+  function onCropStateChange(enabled: boolean) {
+    const croper: any = document.getElementById('image-croper');
+    const imageFull: any = document.getElementById('image-full');
+    clearCroperObservables();
+    if (enabled) {
+      croper.style.opacity = '1.0';
+      dragElement(croper);
+      observer.current = new ResizeObserver((entries) => {
+        entries.forEach((entry) => {
+          const elementCropper: any = croper;
+          const rectHolder = imageFull.getBoundingClientRect() as any;
+          const rectElemnt: any = elementCropper?.getBoundingClientRect();
+          const maxWidth = rectHolder.x + rectHolder.width - rectElemnt.x - 1;
+          const maxHeight = rectHolder.y + rectHolder.height - rectElemnt.y - 1;
+          elementCropper.style.maxWidth = maxWidth + 'px';
+          elementCropper.style.maxHeight = maxHeight + 'px';
+          const newState: IState = { ...state, cropWidth: rectElemnt.width, cropHeight: rectElemnt.height };
+          setState(newState);
+          if (entry.target.id == 'image-full') {
+            if (rectHolder.top > 0) {
+              elementCropper.style.top = rectHolder.top + 1 + 'px';
+            }
+            elementCropper.style.left = rectHolder.left + 1 + 'px';
+          }
+        });
+      });
+      observer.current.observe(croper);
+      observer.current.observe(imageFull);
+    }
+
+  }
+
+  function onChangeCrop(width: number | null, height: number | null) {
+    const croper: any = document.getElementById('image-croper');
+    if (width) {
+      setState({ ...state, cropWidth: width })
+      croper.style.width = state.cropWidth + 'px';
+    }
+    if (height) {
+      setState({ ...state, cropHeight: height })
+      croper.style.height = state.cropHeight + 'px';
+    }
+  }
+
+  function onCrop() {
+    let newState: IState = _cloneObject(state)
+    const croper: any = document.getElementById('image-croper');
+    const rectCroper: any = croper.getBoundingClientRect();
+    const dataHolderRect: any = document.getElementById('image-full')?.getBoundingClientRect();
+    const canvas = document.createElement('canvas');
+    return new Promise((resolve, reject) => {
+      let ctx: any = canvas.getContext('2d');
+      let image = new Image();
+      image.src = imageSrc as string;
+      image.onload = () => {
+        let ratio = image.height / dataHolderRect.height;
+        let newWidth = rectCroper.width * ratio;
+        let newHeight = rectCroper.height * ratio;
+        canvas.height = newHeight;
+        canvas.width = newWidth;
+        ctx.drawImage(
+          image,
+          Math.abs(rectCroper.x * ratio) - Math.abs(dataHolderRect.x * ratio),
+          Math.abs(rectCroper.y * ratio) - Math.abs(dataHolderRect.y * ratio),
+          newWidth,
+          newHeight,
+          0,
+          0,
+          newWidth,
+          newHeight,
+        );
+        return resolve(canvas.toDataURL(`image/${newState.format}`, newState.quality));
+      };
+      image.onerror = (e) => {
+        reject(e);
+      };
+    })
+      .then((dataUri: string) => {
+        newState.maxWidth = canvas.width;
+        newState.maxHeight = canvas.height;
+        newState.originImageSrc = dataUri;
+        newState = saveState(newState, dataUri)
+        clearCroperObservables();
+        setState(newState);
+        setImageSrc(dataUri);
+        setShowCrop(false);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  }
+
+  function clearCroperObservables() {
+    if (observer.current instanceof ResizeObserver) {
+      const croper: any = document.getElementById('image-croper');
+      const imageFull: any = document.getElementById('image-full')
+      if (!croper || !imageFull) return;
+      croper.style.opacity = '0.0';
+      observer.current.unobserve(croper);
+      observer.current.unobserve(imageFull);
+    }
+  }
+
+  function onCloseEditPanel(saveChanges: boolean = false) {
+    clearCroperObservables();
+    setShowCrop(false);
+    if (saveChanges) saveUpdates({ state: state, imageSrc: imageSrc });
+    else saveUpdates(null);
+  }
+
+
 
   const sizeImage = useMemo(() => {
     if (imageSrc && imageSrc.length) {
@@ -91,6 +229,11 @@ const EditImage = memo(({ labels = {}, image = '', color = '#1e88e5', initialSta
       return '';
     }
   }, [imageSrc])
+
+  function _cloneObject(obj: any): any {
+    return JSON.parse(JSON.stringify(obj))
+
+  }
 
 
   return <div className="EditImage">
@@ -103,19 +246,18 @@ const EditImage = memo(({ labels = {}, image = '', color = '#1e88e5', initialSta
           'placeContent': 'center flex-end',
           'alignItems': 'center'
         }}>
-        <button className="icon-btn" onClick={() => { saveUpdates(false) }}>
+        <button className="icon-btn" onClick={() => { onCloseEditPanel(false) }}>
           <span className="material-icons">clear</span>
         </button>
       </div>
       <div className="image-container">
         <div className="image-holder-full">
           <img id="image-full" src={imageSrc as string} />
-
           <div id="image-croper" className="image-croper" style={{ display: showCrop ? '' : 'none' }} >
             <div className="grid"></div>
             <div id="image-croper-header">
-              {new Array(10).map((_, index) => (
-                <div
+              {new Array(9).fill(1).map((_, index) => (
+                <div key={index}
                   style={{
                     border: '1px dashed #fafafa',
                     backgroundColor: 'rgba(0, 0, 0, 0.48)'
@@ -137,20 +279,11 @@ const EditImage = memo(({ labels = {}, image = '', color = '#1e88e5', initialSta
               </div>
 
               <div className='flex-row-start'>
-                {/* <input readOnly={showCrop} disabled={showCrop} className="input-range"
-                  onChange={(e) => (onUpdateQuality(e.target.valueAsNumber))}
-                  style={{
-                    maxWidth: '100%', width: '100%', color: color
-                  }}
-                  type="range"
-                  min={1}
-                  max={100}
-                  value={state.quality}
-                /> */}
                 <Input readOnly={showCrop} disabled={showCrop}
 
                   className="input-range"
                   onChangedDelayed={onUpdateQuality}
+                  onChangedValue={(value: number) => { setState({ ...state, quality: value }) }}
                   style={{
                     maxWidth: '100%', width: '100%', color: color
                   }}
@@ -177,6 +310,7 @@ const EditImage = memo(({ labels = {}, image = '', color = '#1e88e5', initialSta
                     disabled={showCrop}
                     placeholder={labels['max-width(px)']}
                     value={state.maxWidth}
+                    onChangedValue={(value: number) => setState({ ...state, maxWidth: value })}
                     type="number"
                     min={0}
                     max={2000}
@@ -192,6 +326,7 @@ const EditImage = memo(({ labels = {}, image = '', color = '#1e88e5', initialSta
                     disabled={showCrop}
                     placeholder={labels['max-height(px)']}
                     value={state.maxHeight}
+                    onChangedValue={(value: number) => setState({ ...state, maxHeight: value })}
                     type="number"
                     min={0}
                     max={2000}
@@ -200,22 +335,76 @@ const EditImage = memo(({ labels = {}, image = '', color = '#1e88e5', initialSta
                 </div>
               </div>
 
-              {sizeImage && <p
-                className="caption image-caption"
-                style={{
-                  color: sizeImage > 120 ? '#f44336' : 'unset',
-                  fontWeight: sizeImage > 120 ? '500' : 'unset'
-                }}
-              >
-                size: {sizeImage}Kb &nbsp; {state.format}
-              </p>
-              }
+              <p className="item-panel">{labels['Format']}</p>
+              <div className='flex-row-start' style={{ marginTop: '10px', justifyContent: 'space-between' }}>
+                <div className="form-field" style={{ width: '100%' }}>
+                  <select disabled={showCrop} value={state.format} onChange={onChangeFormat}>
+                    {allFormats.map((formatItem, index) => (
+                      <option key={index} value={formatItem}>{formatItem}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
 
+              <div className='flex-row-start' style={{ marginTop: '5px', justifyContent: 'space-between' }}>
+                <span style={{ display: 'flex', alignItems: 'center' }}>
+                  <input
+                    type="checkbox"
+                    onChange={(e) => { setShowCrop(e.target.checked) }}
+                    checked={showCrop}
+                    style={{ color: color, marginBottom: '3px' }}
+                  />
+                  <span className="item-panel" style={{ marginLeft: '4px' }}>{labels['Crop']}</span>
+                </span>
+              </div>
+              {showCrop &&
+                <React.Fragment>
+                  <div className='flex-row-start' style={{ marginTop: '10px', justifyContent: 'space-between' }}>
+                    <div className="form-field" style={{ maxWidth: '48%', width: '48%' }}>
+                      <label>{labels['width(px)']}</label>
+                      <Input type="number"
+                        min={0}
+                        value={state.cropWidth}
+                        onChangedValue={(value: number) => setState({ ...state, cropWidth: value })}
+                        onInputChangedEnd={(value: number) => { onChangeCrop(+value, null) }}
+                        placeholder={labels['width(px)']} />
+                    </div>
+
+                    <div className="form-field" style={{ maxWidth: '48%', width: '48%' }}>
+                      <label>{labels['height(px)']}</label>
+                      <Input type="number"
+                        min={0}
+                        value={state.cropHeight}
+                        onInputChangedEnd={(value: number) => { onChangeCrop(null, +value) }}
+                        onChangedValue={(value: number) => setState({ ...state, cropHeight: value })}
+                        placeholder={labels['height(px)']} />
+                    </div>
+                  </div>
+
+                  <p style={{ marginBottom: '4px !important' }}>
+                    <button title="Cut the image" className="icon-btn" onClick={onCrop}>
+                      <span className="material-icons"> crop </span>
+                    </button>
+                  </p>
+                </React.Fragment>
+              }
             </TabItem>
             <TabItem name="Filters">
             </TabItem>
-
           </TabContainer>
+          <div className='flex-row-start' style={{ marginTop: '10px', justifyContent: 'space-between', alignItems: 'center' }}>
+            <button className="save-btn" onClick={() => { onCloseEditPanel(true) }}>{labels['Save']}</button>
+            {sizeImage && <p
+              className="caption image-caption"
+              style={{
+                color: sizeImage > 120 ? '#f44336' : 'unset',
+                fontWeight: sizeImage > 120 ? '500' : 'unset'
+              }}
+            >
+              size: {sizeImage}Kb &nbsp; {state.format}
+            </p>
+            }
+          </div>
 
         </div>
       </div>
