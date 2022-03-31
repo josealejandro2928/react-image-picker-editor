@@ -1,7 +1,7 @@
 
 import React, { memo, useState, useEffect, useRef, useMemo } from 'react';
 import { IBasicFilterState, ICacheData, IState } from '../../models/index.models';
-import { ResizeObserver } from 'resize-observer'
+import ResizeObserver from 'resize-observer-polyfill';
 
 import './EditImage.scss';
 import TabContainer, { TabItem } from '../Tab/Tab';
@@ -34,7 +34,7 @@ const EditImage = memo(({ labels = {}, image = '', color = '#1e88e5', initialSta
   const [showCrop, setShowCrop] = useState<boolean>(false);
 
 
-  const observer = useRef<ResizeObserver>();
+  const observer = useRef<ResizeObserver | any>();
   const updateStateRef = useRef<number>(0);
   const allFormats = ['webp', 'jpeg', 'png'];
 
@@ -71,7 +71,7 @@ const EditImage = memo(({ labels = {}, image = '', color = '#1e88e5', initialSta
 
   async function onUpdateQuality(quality: number) {
     quality = Math.max(Math.min(quality, 100), 1);
-    console.log("🚀 ~ file: EditImage.tsx ~ line 73 ~ onUpdateQuality ~ quality", quality)
+    // console.log("🚀 ~ file: EditImage.tsx ~ line 73 ~ onUpdateQuality ~ quality", quality)
     const newState: IState = { ...state, quality }
     setState(newState);
     try {
@@ -204,7 +204,7 @@ const EditImage = memo(({ labels = {}, image = '', color = '#1e88e5', initialSta
   }
 
   function clearCroperObservables() {
-    if (observer.current instanceof ResizeObserver) {
+    if (observer.current) {
       const croper: any = document.getElementById('image-croper');
       const imageFull: any = document.getElementById('image-full')
       if (!croper || !imageFull) return;

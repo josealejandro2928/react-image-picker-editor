@@ -28,7 +28,7 @@ The ResizeObserver interface reports changes to the dimensions of an Element's c
 Install the package
 
 ```sh
-npm i resize-observer --save
+npm i resize-observer-polyfill --save
 ```
 
 ### Usages
@@ -164,6 +164,10 @@ Another capability is that you can crop the image by simply dragging and droppin
 ![Image 4](https://ngp-image-picker.surge.sh/assets/images/5.png)
 
 #### [DEMO](https://ngp-image-picker.surge.sh/)
+
+##### Stackblitz example
+
+#### [stackblitz example](https://stackblitz.com/edit/react-ts-ww1wtm?file=index.tsx)
 
 ##### Angular version
 
