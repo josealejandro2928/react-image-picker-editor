@@ -8,7 +8,7 @@
  * (C) 2017 James Ooi. Released under the MIT License.
  */
 
-import CropprCore from './core';
+import CropprCore from "./core";
 
 /**
  * This class is a wrapper for CropprCore that merely implements the main
@@ -20,7 +20,7 @@ export default class Croppr extends CropprCore {
    * @constructor
    * Calls the CropprCore's constructor.
    */
-  constructor(element, options, _deferred = false) {
+  constructor(element: any, options: any, _deferred = false) {
     super(element, options, _deferred);
   }
 
@@ -37,7 +37,7 @@ export default class Croppr extends CropprCore {
    * Changes the image src.
    * @param {String} src
    */
-  setImage(src) {
+  setImage(src: any) {
     return super.setImage(src);
   }
 
@@ -53,7 +53,7 @@ export default class Croppr extends CropprCore {
    * @param {Number} x
    * @param {Number} y
    */
-  moveTo(x, y) {
+  moveTo(x: any, y: any) {
     this.box.move(x, y);
     this.redraw();
 
@@ -71,8 +71,14 @@ export default class Croppr extends CropprCore {
    * @param {Array} origin The origin point to resize from.
    *      Defaults to [0.5, 0.5] (center).
    */
-  resizeTo(width, height, origin = [0.5, 0.5]) {
+  resizeTo(width: any, height: any, origin = [0.5, 0.5]) {
     this.box.resize(width, height, origin);
+
+    //////////////////////////////////////////////////////////////////
+    const parentWidth = this.cropperEl.offsetWidth;
+    const parentHeight = this.cropperEl.offsetHeight;
+    this.box.constrainToBoundary(parentWidth, parentHeight, [0.5, 0.5]);
+    ///////////////////////////////////////////////////////////////////
     this.redraw();
 
     // Call the callback
@@ -88,7 +94,7 @@ export default class Croppr extends CropprCore {
    * @param {Array} origin The origin point to resize from.
    *      Defaults to [0.5, 0.5] (center).
    */
-  scaleBy(factor, origin = [0.5, 0.5]) {
+  scaleBy(factor: any, origin = [0.5, 0.5]) {
     this.box.scale(factor, origin);
     this.redraw();
 
@@ -102,7 +108,7 @@ export default class Croppr extends CropprCore {
   /**
    * Resets the crop region to the initial settings.
    */
-  reset(newOptions?) {
+  reset(newOptions?: any) {
     if (newOptions) {
       this.options = { ...this.options, newOptions };
     }
@@ -118,12 +124,13 @@ export default class Croppr extends CropprCore {
   }
 
   enableVisibility(state: boolean) {
-    let croppContainer: HTMLElement = document.querySelector('.croppr-container');
-    if (!croppContainer) throw new Error('THere is not any croppr');
+    let croppContainer: HTMLElement | any =
+      document.querySelector(".croppr-container");
+    if (!croppContainer) throw new Error("THere is not any croppr");
     if (state) {
-      croppContainer.style.display = 'block';
+      croppContainer.style.display = "block";
     } else {
-      croppContainer.style.display = 'none';
+      croppContainer.style.display = "none";
     }
   }
 }

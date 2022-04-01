@@ -1,13 +1,13 @@
 
 import React, { memo, useState, useEffect, useRef, useMemo } from 'react';
-import { IBasicFilterState, ICacheData, IState } from '../../models/index.models';
-import ResizeObserver from 'resize-observer-polyfill';
+import { IBasicFilterState, IState } from '../../models/index.models';
 
 import './EditImage.scss';
 import TabContainer, { TabItem } from '../Tab/Tab';
 import { convertImageUsingCanvas, dragElement, saveState } from '../../functions/image-processing';
 import Input from '../Input/Input';
 import BasicFilter from '../BasicFilters/BasicFilter';
+import CropprWrapper from '../CropprWrapper/CropprWrapper';
 
 export interface EditImageProps {
   labels: any;
@@ -32,9 +32,9 @@ const EditImage = memo(({ labels = {}, image = '', color = '#1e88e5', initialSta
   const [state, setState] = useState<IState>(initialState)
   const [imageSrc, setImageSrc] = useState<string | null>('')
   const [showCrop, setShowCrop] = useState<boolean>(false);
+  const [croppSize, setCroppSize] = useState<{ width: number; height: number }>({ width: 150, height: 150 })
+  const [croppState, setCroppState] = useState<{ x: number; y: number; width: number; height: number } | undefined | null>()
 
-
-  const observer = useRef<ResizeObserver | any>();
   const isMobile = useRef<boolean>(false);
   const allFormats = ['webp', 'jpeg', 'png'];
 
@@ -47,14 +47,10 @@ const EditImage = memo(({ labels = {}, image = '', color = '#1e88e5', initialSta
     setImageSrc(image)
   }, [image])
 
-  useEffect(() => {
-    // console.log(state);
-  }, [state])
 
   useEffect(() => {
-    onCropStateChange(showCrop);
-    return () => {
-      clearCroperObservables();
+    if (!showCrop) {
+      setCroppSize({ width: 150, height: 150 });
     }
   }, [showCrop])
 
@@ -112,76 +108,40 @@ const EditImage = memo(({ labels = {}, image = '', color = '#1e88e5', initialSta
     }
   }
 
-  function onCropStateChange(enabled: boolean) {
-    const croper: any = document.getElementById('image-croper');
-    const imageFull: any = document.getElementById('image-full');
-    clearCroperObservables();
-    if (enabled) {
-      croper.style.opacity = '1.0';
-      dragElement(croper);
-      observer.current = new ResizeObserver((entries) => {
-        entries.forEach((entry) => {
-          const elementCropper: any = croper;
-          const rectHolder = imageFull.getBoundingClientRect() as any;
-          const rectElemnt: any = elementCropper?.getBoundingClientRect();
-          const maxWidth = rectHolder.x + rectHolder.width - rectElemnt.x - 1;
-          const maxHeight = rectHolder.y + rectHolder.height - rectElemnt.y - 1;
-          elementCropper.style.maxWidth = maxWidth + 'px';
-          elementCropper.style.maxHeight = maxHeight + 'px';
-          const newState: IState = { ...state, cropWidth: rectElemnt.width, cropHeight: rectElemnt.height };
-          setState(newState);
-          if (entry.target.id == 'image-full') {
-            if (rectHolder.top > 0) {
-              elementCropper.style.top = rectHolder.top + 1 + 'px';
-            }
-            elementCropper.style.left = rectHolder.left + 1 + 'px';
-          }
-        });
-      });
-      observer.current.observe(croper);
-      observer.current.observe(imageFull);
-    }
-
-  }
 
   function onChangeCrop(width: number | null, height: number | null) {
-    const croper: any = document.getElementById('image-croper');
     if (width) {
       setState({ ...state, cropWidth: width })
-      croper.style.width = state.cropWidth + 'px';
+      setCroppSize({ ...croppSize, width: width });
     }
     if (height) {
       setState({ ...state, cropHeight: height })
-      croper.style.height = state.cropHeight + 'px';
+      setCroppSize({ ...croppSize, height: height });
     }
   }
 
   function onCrop() {
     let newState: IState = _cloneObject(state)
-    const croper: any = document.getElementById('image-croper');
-    const rectCroper: any = croper.getBoundingClientRect();
-    const dataHolderRect: any = document.getElementById('image-full')?.getBoundingClientRect();
     const canvas = document.createElement('canvas');
     return new Promise((resolve, reject) => {
       let ctx: any = canvas.getContext('2d');
       let image = new Image();
       image.src = imageSrc as string;
       image.onload = () => {
-        let ratio = image.height / dataHolderRect.height;
-        let newWidth = rectCroper.width * ratio;
-        let newHeight = rectCroper.height * ratio;
+        let newWidth: any = croppState?.width;
+        let newHeight: any = croppState?.height;
         canvas.height = newHeight;
         canvas.width = newWidth;
         ctx.drawImage(
           image,
-          Math.abs(rectCroper.x * ratio) - Math.abs(dataHolderRect.x * ratio),
-          Math.abs(rectCroper.y * ratio) - Math.abs(dataHolderRect.y * ratio),
-          newWidth,
-          newHeight,
+          Math.abs(croppState?.x as any),
+          Math.abs(croppState?.y as any),
+          croppState?.width,
+          croppState?.height,
           0,
           0,
-          newWidth,
-          newHeight,
+          croppState?.width,
+          croppState?.height,
         );
         return resolve(canvas.toDataURL(`image/${newState.format}`, newState.quality));
       };
@@ -194,7 +154,6 @@ const EditImage = memo(({ labels = {}, image = '', color = '#1e88e5', initialSta
         newState.maxHeight = canvas.height;
         newState.originImageSrc = dataUri;
         newState = saveState(newState, dataUri)
-        clearCroperObservables();
         setState(newState);
         setImageSrc(dataUri);
         setShowCrop(false);
@@ -204,19 +163,13 @@ const EditImage = memo(({ labels = {}, image = '', color = '#1e88e5', initialSta
       });
   }
 
-  function clearCroperObservables() {
-    if (observer.current) {
-      const croper: any = document.getElementById('image-croper');
-      const imageFull: any = document.getElementById('image-full')
-      if (!croper || !imageFull) return;
-      croper.style.opacity = '0.0';
-      observer.current.unobserve(croper);
-      observer.current.unobserve(imageFull);
-    }
+  function onCroppUpdate(data: { x: number; y: number; width: number; height: number }) {
+    setCroppState(data);
+    setState({ ...state, cropHeight: data.height, cropWidth: data.width });
   }
 
+
   function onCloseEditPanel(saveChanges: boolean = false) {
-    clearCroperObservables();
     setShowCrop(false);
     if (saveChanges) saveUpdates({ state: state, imageSrc: imageSrc });
     else saveUpdates(null);
@@ -293,22 +246,8 @@ const EditImage = memo(({ labels = {}, image = '', color = '#1e88e5', initialSta
       </div>
       <div className="image-container">
         <div className="image-holder-full">
-          <img id="image-full" src={imageSrc as string} />
-          <div id="image-croper" className="image-croper" style={{ display: showCrop ? '' : 'none' }} >
-            <div className="grid"></div>
-            <div id="image-croper-header">
-              {new Array(9).fill(1).map((_, index) => (
-                <div key={index}
-                  style={{
-                    border: '1px dashed #fafafa',
-                    backgroundColor: 'rgba(0, 0, 0, 0.48)'
-
-                  }}
-                />
-              ))}
-              <span className="material-icons" style={{ position: 'absolute', top: 0, left: 0 }}>drag_indicator</span>
-            </div>
-          </div>
+          {!showCrop && <img id="image-full" src={imageSrc as string} />}
+          {showCrop && <CropprWrapper src={imageSrc as string} size={croppSize} croppUpdate={onCroppUpdate} ></CropprWrapper>}
         </div>
 
         <div className="control-panel">

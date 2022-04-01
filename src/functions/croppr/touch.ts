@@ -8,32 +8,34 @@
  * Binds an element's touch events to be simulated as mouse events.
  * @param {Element} element
  */
-export default function enableTouch(element) {
-  element.addEventListener('touchstart', simulateMouseEvent);
-  element.addEventListener('touchend', simulateMouseEvent);
-  element.addEventListener('touchmove', simulateMouseEvent);
+export default function enableTouch(element: any) {
+  element.addEventListener("touchstart", simulateMouseEvent);
+  element.addEventListener("touchend", simulateMouseEvent);
+  element.addEventListener("touchmove", simulateMouseEvent);
 }
 
 /**
  * Translates a touch event to a mouse event.
  * @param {Event} e
  */
-function simulateMouseEvent(e) {
+function simulateMouseEvent(e: any) {
   e.preventDefault();
   const touch = e.changedTouches[0];
   const eventMap = {
-    'touchstart': 'mousedown',
-    'touchmove': 'mousemove',
-    'touchend': 'mouseup'
-  }
+    touchstart: "mousedown",
+    touchmove: "mousemove",
+    touchend: "mouseup",
+  };
 
-  touch.target.dispatchEvent(new MouseEvent(eventMap[e.type], {
-    bubbles: true,
-    cancelable: true,
-    view: window,
-    clientX: touch.clientX,
-    clientY: touch.clientY,
-    screenX: touch.screenX,
-    screenY: touch.screenY,
-  }));
+  touch.target.dispatchEvent(
+    new MouseEvent(eventMap[e.type], {
+      bubbles: true,
+      cancelable: true,
+      view: window,
+      clientX: touch.clientX,
+      clientY: touch.clientY,
+      screenX: touch.screenX,
+      screenY: touch.screenY,
+    })
+  );
 }

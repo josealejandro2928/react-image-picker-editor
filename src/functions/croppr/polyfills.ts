@@ -5,14 +5,16 @@
 // Request Animation Frame polyfill
 (function () {
   var lastTime = 0;
-  var vendors = ['ms', 'moz', 'webkit', 'o'];
+  var vendors = ["ms", "moz", "webkit", "o"];
   for (var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
-    window.requestAnimationFrame = window[vendors[x] + 'RequestAnimationFrame'];
-    window.cancelAnimationFrame = window[vendors[x] + 'CancelAnimationFrame'] || window[vendors[x] + 'CancelRequestAnimationFrame'];
+    window.requestAnimationFrame = window[vendors[x] + "RequestAnimationFrame"];
+    window.cancelAnimationFrame =
+      window[vendors[x] + "CancelAnimationFrame"] ||
+      window[vendors[x] + "CancelRequestAnimationFrame"];
   }
 
   if (!window.requestAnimationFrame)
-    window.requestAnimationFrame = function (callback, element) {
+    window.requestAnimationFrame = function (callback: any, element: any) {
       var currTime = new Date().getTime();
       var timeToCall = Math.max(0, 16 - (currTime - lastTime));
       var id = window.setTimeout(function () {
@@ -30,12 +32,17 @@
 
 // CustomEvents polyfill
 (function () {
-  if (typeof window.CustomEvent === 'function') return false;
+  if (typeof window.CustomEvent === "function") return false;
 
-  function CustomEvent(event, params) {
+  function CustomEvent(event: any, params: any) {
     params = params || { bubbles: false, cancelable: false, detail: undefined };
-    var evt = document.createEvent('CustomEvent');
-    evt.initCustomEvent(event, params.bubbles, params.cancelable, params.detail);
+    var evt = document.createEvent("CustomEvent");
+    evt.initCustomEvent(
+      event,
+      params.bubbles,
+      params.cancelable,
+      params.detail
+    );
     return evt;
   }
 
@@ -47,17 +54,33 @@
 // MouseEvents polyfill
 (function (window) {
   try {
-    new CustomEvent('test');
+    new CustomEvent("test");
     return false; // No need to polyfill
   } catch (e) {
     // Need to polyfill - fall through
   }
 
   // Polyfills DOM4 CustomEvent
-  function MouseEvent(eventType, params) {
+  function MouseEvent(eventType: any, params: any) {
     params = params || { bubbles: false, cancelable: false };
-    var mouseEvent = document.createEvent('MouseEvent');
-    mouseEvent.initMouseEvent(eventType, params.bubbles, params.cancelable, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+    var mouseEvent = document.createEvent("MouseEvent");
+    mouseEvent.initMouseEvent(
+      eventType,
+      params.bubbles,
+      params.cancelable,
+      window,
+      0,
+      0,
+      0,
+      0,
+      0,
+      false,
+      false,
+      false,
+      false,
+      0,
+      null
+    );
 
     return mouseEvent;
   }

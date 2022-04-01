@@ -3,9 +3,9 @@
  * Here lies the main logic.
  */
 
-import Handle from './handle';
-import Box from './box';
-import enableTouch from './touch';
+import Handle from "./handle";
+import Box from "./box";
+import enableTouch from "./touch";
 
 /**
  * Define a list of handles to create.
@@ -18,14 +18,14 @@ import enableTouch from './touch';
  * @property {String} cursor - The CSS cursor of this handle.
  */
 const HANDLES = [
-  { position: [0.0, 0.0], constraints: [1, 0, 0, 1], cursor: 'nw-resize' },
-  { position: [0.5, 0.0], constraints: [1, 0, 0, 0], cursor: 'n-resize' },
-  { position: [1.0, 0.0], constraints: [1, 1, 0, 0], cursor: 'ne-resize' },
-  { position: [1.0, 0.5], constraints: [0, 1, 0, 0], cursor: 'e-resize' },
-  { position: [1.0, 1.0], constraints: [0, 1, 1, 0], cursor: 'se-resize' },
-  { position: [0.5, 1.0], constraints: [0, 0, 1, 0], cursor: 's-resize' },
-  { position: [0.0, 1.0], constraints: [0, 0, 1, 1], cursor: 'sw-resize' },
-  { position: [0.0, 0.5], constraints: [0, 0, 0, 1], cursor: 'w-resize' },
+  { position: [0.0, 0.0], constraints: [1, 0, 0, 1], cursor: "nw-resize" },
+  { position: [0.5, 0.0], constraints: [1, 0, 0, 0], cursor: "n-resize" },
+  { position: [1.0, 0.0], constraints: [1, 1, 0, 0], cursor: "ne-resize" },
+  { position: [1.0, 0.5], constraints: [0, 1, 0, 0], cursor: "e-resize" },
+  { position: [1.0, 1.0], constraints: [0, 1, 1, 0], cursor: "se-resize" },
+  { position: [0.5, 1.0], constraints: [0, 0, 1, 0], cursor: "s-resize" },
+  { position: [0.0, 1.0], constraints: [0, 0, 1, 1], cursor: "sw-resize" },
+  { position: [0.0, 0.5], constraints: [0, 0, 0, 1], cursor: "w-resize" },
 ];
 
 /**
@@ -47,19 +47,21 @@ export default class CropprCore {
   activeHandle: any;
   currentMove: any;
 
-  constructor(element, options, deferred = false) {
+  constructor(element: any, options: any, deferred = false) {
+    // console.log("🚀 ~ file: core.ts ~ line 51 ~ CropprCore ~ constructor ~ element", element)
     // Parse options
     this.options = CropprCore.parseOptions(options || {});
 
     // Get target img element
     if (!element.nodeName) {
       element = document.querySelector(element);
+      // console.log("🚀 ~ file: core.ts ~ line 58 ~ CropprCore ~ constructor ~ element", element)
       if (element == null) {
-        throw 'Unable to find element.';
+        throw "Unable to find element.";
       }
     }
-    if (!element.getAttribute('src')) {
-      throw 'Image src not provided.';
+    if (!element.getAttribute("src")) {
+      throw "Image src not provided.";
     }
 
     // Define internal props
@@ -84,7 +86,7 @@ export default class CropprCore {
   /**
    * Initialize the Croppr instance
    */
-  initialize(element) {
+  initialize(element: any) {
     // Create DOM elements
     this.createDOM(element);
 
@@ -110,45 +112,50 @@ export default class CropprCore {
   /**
    * Create Croppr's DOM elements
    */
-  createDOM(targetEl) {
+  createDOM(targetEl: any) {
     // Create main container and use it as the main event listeners
-    this.containerEl = document.createElement('div');
-    this.containerEl.className = 'croppr-container';
+    this.containerEl = document.createElement("div");
+    this.containerEl.className = "croppr-container";
     this.eventBus = this.containerEl;
     enableTouch(this.containerEl);
 
     // Create cropper element
-    this.cropperEl = document.createElement('div');
-    this.cropperEl.className = 'croppr';
+    this.cropperEl = document.createElement("div");
+    this.cropperEl.className = "croppr";
 
     // Create image element
-    this.imageEl = document.createElement('img');
-    this.imageEl.setAttribute('src', targetEl.getAttribute('src'));
-    this.imageEl.setAttribute('alt', targetEl.getAttribute('alt'));
-    this.imageEl.className = 'croppr-image';
+    this.imageEl = document.createElement("img");
+    this.imageEl.setAttribute("src", targetEl.getAttribute("src"));
+    this.imageEl.setAttribute("alt", targetEl.getAttribute("alt"));
+    this.imageEl.className = "croppr-image";
 
     // Create clipped image element
     this.imageClippedEl = this.imageEl.cloneNode();
-    this.imageClippedEl.className = 'croppr-imageClipped';
+    this.imageClippedEl.className = "croppr-imageClipped";
 
     // Create region box element
-    this.regionEl = document.createElement('div');
+    this.regionEl = document.createElement("div");
     this.regionEl.innerHTML = new Array(9)
       .fill(1)
       .map(() => `<div style="border: 1px dashed #fafafa"></div>`)
-      .join('');
-    this.regionEl.className = 'croppr-region';
+      .join("");
+    this.regionEl.className = "croppr-region";
 
     // Create overlay element
-    this.overlayEl = document.createElement('div');
-    this.overlayEl.className = 'croppr-overlay';
+    this.overlayEl = document.createElement("div");
+    this.overlayEl.className = "croppr-overlay";
 
     // Create handles element
-    let handleContainerEl = document.createElement('div');
-    handleContainerEl.className = 'croppr-handleContainer';
+    let handleContainerEl = document.createElement("div");
+    handleContainerEl.className = "croppr-handleContainer";
     this.handles = [];
     for (let i = 0; i < HANDLES.length; i++) {
-      const handle = new Handle(HANDLES[i].position, HANDLES[i].constraints, HANDLES[i].cursor, this.eventBus);
+      const handle = new Handle(
+        HANDLES[i].position,
+        HANDLES[i].constraints,
+        HANDLES[i].cursor,
+        this.eventBus
+      );
       this.handles.push(handle);
       handleContainerEl.appendChild(handle.el);
     }
@@ -169,7 +176,7 @@ export default class CropprCore {
    * Changes the image src.
    * @param {String} src
    */
-  setImage(src) {
+  setImage(src: any) {
     // Add onload listener to reinitialize box
     this.imageEl.onload = () => {
       this.box = this.initializeBox(this.options);
@@ -194,7 +201,7 @@ export default class CropprCore {
    * @param {Object} opts The options.
    * @returns {Box}
    */
-  initializeBox(opts) {
+  initializeBox(opts: any) {
     // Create initial box
     const width = opts.startSize.width;
     const height = opts.startSize.height;
@@ -207,7 +214,14 @@ export default class CropprCore {
     // Maintain minimum/maximum size
     const min = opts.minSize;
     const max = opts.maxSize;
-    box.constrainToSize(max.width, max.height, min.width, min.height, [0.5, 0.5], opts.aspectRatio);
+    box.constrainToSize(
+      max.width,
+      max.height,
+      min.width,
+      min.height,
+      [0.5, 0.5],
+      opts.aspectRatio
+    );
 
     // Constrain to boundary
     const parentWidth = this.cropperEl.offsetWidth;
@@ -220,7 +234,7 @@ export default class CropprCore {
 
     // console.log("🚀 ~ file: core.ts ~ line 219 ~ CropprCore ~ initializeBox ~ this.cropperEl", this.cropperEl.offsetWidth)
     // console.log("🚀 ~ file: core.ts ~ line 223 ~ CropprCore ~ initializeBox ~ x, y", x, y)
-    box.move(x,y);
+    box.move(x as any, y as any);
 
     return box;
   }
@@ -241,8 +255,8 @@ export default class CropprCore {
     window.requestAnimationFrame(() => {
       // Update region element
       this.regionEl.style.transform = `translate(${x1}px, ${y1}px)`;
-      this.regionEl.style.width = width + 'px';
-      this.regionEl.style.height = height + 'px';
+      this.regionEl.style.width = width + "px";
+      this.regionEl.style.height = height + "px";
 
       // Update clipped image element
       this.imageClippedEl.style.clip = `rect(${y1}px, ${x2}px, ${y2}px, ${x1}px)`;
@@ -271,7 +285,9 @@ export default class CropprCore {
 
         // Apply new position. The positional values are rounded to
         // prevent subpixel positions which can result in a blurry element
-        handle.el.style.transform = `translate(${Math.round(left)}px, ${Math.round(top)}px)`;
+        handle.el.style.transform = `translate(${Math.round(
+          left
+        )}px, ${Math.round(top)}px)`;
         handle.el.style.zIndex = foregroundHandleIndex == i ? 5 : 4;
       }
     });
@@ -283,9 +299,9 @@ export default class CropprCore {
    */
   attachHandlerEvents() {
     const eventBus = this.eventBus;
-    eventBus.addEventListener('handlestart', this.onHandleMoveStart.bind(this));
-    eventBus.addEventListener('handlemove', this.onHandleMoveMoving.bind(this));
-    eventBus.addEventListener('handleend', this.onHandleMoveEnd.bind(this));
+    eventBus.addEventListener("handlestart", this.onHandleMoveStart.bind(this));
+    eventBus.addEventListener("handlemove", this.onHandleMoveMoving.bind(this));
+    eventBus.addEventListener("handleend", this.onHandleMoveEnd.bind(this));
   }
 
   /**
@@ -296,45 +312,45 @@ export default class CropprCore {
     const eventBus = this.eventBus;
     const self = this;
 
-    this.regionEl.addEventListener('mousedown', onMouseDown);
-    eventBus.addEventListener('regionstart', this.onRegionMoveStart.bind(this));
-    eventBus.addEventListener('regionmove', this.onRegionMoveMoving.bind(this));
-    eventBus.addEventListener('regionend', this.onRegionMoveEnd.bind(this));
+    this.regionEl.addEventListener("mousedown", onMouseDown);
+    eventBus.addEventListener("regionstart", this.onRegionMoveStart.bind(this));
+    eventBus.addEventListener("regionmove", this.onRegionMoveMoving.bind(this));
+    eventBus.addEventListener("regionend", this.onRegionMoveEnd.bind(this));
 
-    function onMouseDown(e) {
+    function onMouseDown(e: any) {
       e.stopPropagation();
-      document.addEventListener('mouseup', onMouseUp);
-      document.addEventListener('mousemove', onMouseMove);
+      document.addEventListener("mouseup", onMouseUp);
+      document.addEventListener("mousemove", onMouseMove);
 
       // Notify parent
       eventBus.dispatchEvent(
-        new CustomEvent('regionstart', {
+        new CustomEvent("regionstart", {
           detail: { mouseX: e.clientX, mouseY: e.clientY },
-        }),
+        })
       );
     }
 
-    function onMouseMove(e) {
+    function onMouseMove(e: any) {
       e.stopPropagation();
 
       // Notify parent
       eventBus.dispatchEvent(
-        new CustomEvent('regionmove', {
+        new CustomEvent("regionmove", {
           detail: { mouseX: e.clientX, mouseY: e.clientY },
-        }),
+        })
       );
     }
 
-    function onMouseUp(e) {
+    function onMouseUp(e: any) {
       e.stopPropagation();
-      document.removeEventListener('mouseup', onMouseUp);
-      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener("mouseup", onMouseUp);
+      document.removeEventListener("mousemove", onMouseMove);
 
       // Notify parent
       eventBus.dispatchEvent(
-        new CustomEvent('regionend', {
+        new CustomEvent("regionend", {
           detail: { mouseX: e.clientX, mouseY: e.clientY },
-        }),
+        })
       );
     }
   }
@@ -346,13 +362,13 @@ export default class CropprCore {
   attachOverlayEvents() {
     const SOUTHEAST_HANDLE_IDX = 4;
     const self = this;
-    let tmpBox = null;
-    this.overlayEl.addEventListener('mousedown', onMouseDown);
+    let tmpBox: any = null;
+    this.overlayEl.addEventListener("mousedown", onMouseDown);
 
-    function onMouseDown(e) {
+    function onMouseDown(e: any) {
       e.stopPropagation();
-      document.addEventListener('mouseup', onMouseUp);
-      document.addEventListener('mousemove', onMouseMove);
+      document.addEventListener("mouseup", onMouseUp);
+      document.addEventListener("mousemove", onMouseMove);
 
       // Calculate mouse's position in relative to the container
       const container = self.cropperEl.getBoundingClientRect();
@@ -365,25 +381,25 @@ export default class CropprCore {
 
       // Activate the bottom right handle
       self.eventBus.dispatchEvent(
-        new CustomEvent('handlestart', {
+        new CustomEvent("handlestart", {
           detail: { handle: self.handles[SOUTHEAST_HANDLE_IDX] },
-        }),
+        })
       );
     }
 
-    function onMouseMove(e) {
+    function onMouseMove(e: any) {
       e.stopPropagation();
       self.eventBus.dispatchEvent(
-        new CustomEvent('handlemove', {
+        new CustomEvent("handlemove", {
           detail: { mouseX: e.clientX, mouseY: e.clientY },
-        }),
+        })
       );
     }
 
-    function onMouseUp(e) {
+    function onMouseUp(e: any) {
       e.stopPropagation();
-      document.removeEventListener('mouseup', onMouseUp);
-      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener("mouseup", onMouseUp);
+      document.removeEventListener("mousemove", onMouseMove);
 
       // If the new box has no width and height, it suggests that
       // the user had just clicked on an empty area and did not drag
@@ -395,9 +411,9 @@ export default class CropprCore {
       }
 
       self.eventBus.dispatchEvent(
-        new CustomEvent('handleend', {
+        new CustomEvent("handleend", {
           detail: { mouseX: e.clientX, mouseY: e.clientY },
-        }),
+        })
       );
     }
   }
@@ -406,7 +422,7 @@ export default class CropprCore {
    * EVENT HANDLER
    * Executes when user begins dragging a handle.
    */
-  onHandleMoveStart(e) {
+  onHandleMoveStart(e: any) {
     let handle = e.detail.handle;
 
     // The origin point is the point where the box is scaled from.
@@ -426,7 +442,7 @@ export default class CropprCore {
    * EVENT HANDLER
    * Executes on handle move. Main logic to manage the movement of handles.
    */
-  onHandleMoveMoving(e) {
+  onHandleMoveMoving(e: any) {
     let { mouseX, mouseY } = e.detail;
 
     // Calculate mouse's position in relative to the container
@@ -456,7 +472,8 @@ export default class CropprCore {
     const RIGHT_MOVABLE = handle.constraints[1] === 1;
     const BOTTOM_MOVABLE = handle.constraints[2] === 1;
     const LEFT_MOVABLE = handle.constraints[3] === 1;
-    const MULTI_AXIS = (LEFT_MOVABLE || RIGHT_MOVABLE) && (TOP_MOVABLE || BOTTOM_MOVABLE);
+    const MULTI_AXIS =
+      (LEFT_MOVABLE || RIGHT_MOVABLE) && (TOP_MOVABLE || BOTTOM_MOVABLE);
 
     // Apply movement to respective sides according to the handle's
     // constraint values.
@@ -501,18 +518,27 @@ export default class CropprCore {
       const ratio = this.options.aspectRatio;
       let isVerticalMovement = false;
       if (MULTI_AXIS) {
-        isVerticalMovement = mouseY > box.y1 + ratio * box.width() || mouseY < box.y2 - ratio * box.width();
+        isVerticalMovement =
+          mouseY > box.y1 + ratio * box.width() ||
+          mouseY < box.y2 - ratio * box.width();
       } else if (TOP_MOVABLE || BOTTOM_MOVABLE) {
         isVerticalMovement = true;
       }
-      const ratioMode = isVerticalMovement ? 'width' : 'height';
+      const ratioMode = isVerticalMovement ? "width" : "height";
       box.constrainToRatio(ratio, origin, ratioMode);
     }
 
     // Maintain minimum/maximum size
     const min = this.options.minSize;
     const max = this.options.maxSize;
-    box.constrainToSize(max.width, max.height, min.width, min.height, origin, this.options.aspectRatio);
+    box.constrainToSize(
+      max.width,
+      max.height,
+      min.width,
+      min.height,
+      origin,
+      this.options.aspectRatio
+    );
 
     // Constrain to boundary
     const parentWidth = this.cropperEl.offsetWidth;
@@ -533,7 +559,7 @@ export default class CropprCore {
    * EVENT HANDLER
    * Executes on handle move end.
    */
-  onHandleMoveEnd(e) {
+  onHandleMoveEnd(e: any) {
     // Trigger callback
     if (this.options.onCropEnd !== null) {
       this.options.onCropEnd(this.getValue());
@@ -544,7 +570,7 @@ export default class CropprCore {
    * EVENT HANDLER
    * Executes when user starts moving the crop region.
    */
-  onRegionMoveStart(e) {
+  onRegionMoveStart(e: any) {
     let { mouseX, mouseY } = e.detail;
 
     // Calculate mouse's position in relative to the container
@@ -567,7 +593,7 @@ export default class CropprCore {
    * EVENT HANDLER
    * Executes when user moves the crop region.
    */
-  onRegionMoveMoving(e) {
+  onRegionMoveMoving(e: any) {
     let { mouseX, mouseY } = e.detail;
     let { offsetX, offsetY } = this.currentMove;
 
@@ -605,7 +631,7 @@ export default class CropprCore {
    * EVENT HANDLER
    * Executes when user stops moving the crop region (mouse up).
    */
-  onRegionMoveEnd(e) {
+  onRegionMoveEnd(e: any) {
     // Trigger callback
     if (this.options.onCropEnd !== null) {
       this.options.onCropEnd(this.getValue());
@@ -619,10 +645,11 @@ export default class CropprCore {
     if (mode === null) {
       mode = this.options.returnMode;
     }
-    if (mode == 'real') {
+    if (mode == "real") {
       const actualWidth = this.imageEl.naturalWidth;
       const actualHeight = this.imageEl.naturalHeight;
-      const { width: elementWidth, height: elementHeight } = this.imageEl.getBoundingClientRect();
+      const { width: elementWidth, height: elementHeight } =
+        this.imageEl.getBoundingClientRect();
       const factorX = actualWidth / elementWidth;
       const factorY = actualHeight / elementHeight;
       return {
@@ -631,15 +658,16 @@ export default class CropprCore {
         width: Math.round(this.box.width() * factorX),
         height: Math.round(this.box.height() * factorY),
       };
-    } else if (mode == 'ratio') {
-      const { width: elementWidth, height: elementHeight } = this.imageEl.getBoundingClientRect();
+    } else if (mode == "ratio") {
+      const { width: elementWidth, height: elementHeight } =
+        this.imageEl.getBoundingClientRect();
       return {
         x: round(this.box.x1 / elementWidth, 3),
         y: round(this.box.y1 / elementHeight, 3),
         width: round(this.box.width() / elementWidth, 3),
         height: round(this.box.height() / elementHeight, 3),
       };
-    } else if (mode == 'raw') {
+    } else if (mode == "raw") {
       return {
         x: Math.round(this.box.x1),
         y: Math.round(this.box.y1),
@@ -652,13 +680,13 @@ export default class CropprCore {
   /**
    * Parse user options and set default values.
    */
-  static parseOptions(opts) {
+  static parseOptions(opts: any) {
     const defaults = {
       aspectRatio: null,
       maxSize: { width: null, height: null },
       minSize: { width: null, height: null },
-      startSize: { width: 100, height: 100, unit: '%' },
-      returnMode: 'real',
+      startSize: { width: 100, height: 100, unit: "%" },
+      returnMode: "real",
       onInitialize: null,
       onCropStart: null,
       onCropMove: null,
@@ -668,7 +696,7 @@ export default class CropprCore {
     // Parse aspect ratio
     let aspectRatio = null;
     if (opts.aspectRatio !== undefined) {
-      if (typeof opts.aspectRatio === 'number') {
+      if (typeof opts.aspectRatio === "number") {
         aspectRatio = opts.aspectRatio;
       } else if (opts.aspectRatio instanceof Array) {
         aspectRatio = opts.aspectRatio[1] / opts.aspectRatio[0];
@@ -681,7 +709,7 @@ export default class CropprCore {
       maxSize = {
         width: opts.maxSize[0] || null,
         height: opts.maxSize[1] || null,
-        unit: opts.maxSize[2] || 'px',
+        unit: opts.maxSize[2] || "px",
       };
     }
 
@@ -691,7 +719,7 @@ export default class CropprCore {
       minSize = {
         width: opts.minSize[0] || null,
         height: opts.minSize[1] || null,
-        unit: opts.minSize[2] || 'px',
+        unit: opts.minSize[2] || "px",
       };
     }
 
@@ -701,36 +729,36 @@ export default class CropprCore {
       startSize = {
         width: opts.startSize[0] || null,
         height: opts.startSize[1] || null,
-        unit: opts.startSize[2] || '%',
+        unit: opts.startSize[2] || "%",
       };
     }
 
     // Parse callbacks
     let onInitialize = null;
-    if (typeof opts.onInitialize === 'function') {
+    if (typeof opts.onInitialize === "function") {
       onInitialize = opts.onInitialize;
     }
 
     let onCropStart = null;
-    if (typeof opts.onCropStart === 'function') {
+    if (typeof opts.onCropStart === "function") {
       onCropStart = opts.onCropStart;
     }
 
     let onCropEnd = null;
-    if (typeof opts.onCropEnd === 'function') {
+    if (typeof opts.onCropEnd === "function") {
       onCropEnd = opts.onCropEnd;
     }
 
     let onCropMove = null;
-    if (typeof opts.onUpdate === 'function') {
+    if (typeof opts.onUpdate === "function") {
       // DEPRECATED: onUpdate is deprecated to create a more uniform
       // callback API, such as: onCropStart, onCropMove, onCropEnd
       console.warn(
-        'Croppr.js: `onUpdate` is deprecated and will be removed in the next major release. Please use `onCropMove` or `onCropEnd` instead.',
+        "Croppr.js: `onUpdate` is deprecated and will be removed in the next major release. Please use `onCropMove` or `onCropEnd` instead."
       );
       onCropMove = opts.onUpdate;
     }
-    if (typeof opts.onCropMove === 'function') {
+    if (typeof opts.onCropMove === "function") {
       onCropMove = opts.onCropMove;
     }
 
@@ -738,23 +766,23 @@ export default class CropprCore {
     let returnMode = null;
     if (opts.returnMode !== undefined) {
       const s = opts.returnMode.toLowerCase();
-      if (['real', 'ratio', 'raw'].indexOf(s) === -1) {
-        throw 'Invalid return mode.';
+      if (["real", "ratio", "raw"].indexOf(s) === -1) {
+        throw "Invalid return mode.";
       }
       returnMode = s;
     }
 
     // Create function to convert % values to pixels
-    const convertToPixels = function (container) {
+    const convertToPixels = function (this: any, container: any) {
       const width = container.offsetWidth;
       const height = container.offsetHeight;
 
       // Convert sizes
-      const sizeKeys = ['maxSize', 'minSize', 'startSize'];
+      const sizeKeys = ["maxSize", "minSize", "startSize"];
       for (let i = 0; i < sizeKeys.length; i++) {
         const key = sizeKeys[i];
         if (this[key] !== null) {
-          if (this[key].unit == '%') {
+          if (this[key].unit == "%") {
             if (this[key].width !== null) {
               this[key].width = (this[key].width / 100) * width;
             }
@@ -767,7 +795,7 @@ export default class CropprCore {
       }
     };
 
-    const defaultValue = (v, d) => (v !== null ? v : d);
+    const defaultValue = (v: any, d: any) => (v !== null ? v : d);
     return {
       aspectRatio: defaultValue(aspectRatio, defaults.aspectRatio),
       maxSize: defaultValue(maxSize, defaults.maxSize),
@@ -787,6 +815,6 @@ export default class CropprCore {
  * HELPER FUNCTIONS
  */
 
-function round(value, decimals) {
-  return Number(Math.round((value + 'e' + decimals) as any) + 'e-' + decimals);
+function round(value: any, decimals: any) {
+  return Number(Math.round((value + "e" + decimals) as any) + "e-" + decimals);
 }

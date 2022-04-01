@@ -15,7 +15,7 @@ export default class Box {
   x2: any;
   y2: any;
 
-  constructor(x1, y1, x2, y2) {
+  constructor(x1: any, y1: any, x2: any, y2: any) {
     this.x1 = x1;
     this.y1 = y1;
     this.x2 = x2;
@@ -60,9 +60,10 @@ export default class Box {
    * @param {Array} [origin] The origin point to resize from.
    *      Defaults to [0, 0] (top left).
    */
-  resize(newWidth, newHeight, origin = [0, 0]) {
+  resize(newWidth: any, newHeight: any, origin = [0, 0]) {
     const fromX = this.x1 + this.width() * origin[0];
     const fromY = this.y1 + this.height() * origin[1];
+
 
     this.x1 = fromX - newWidth * origin[0];
     this.y1 = fromY - newHeight * origin[1];
@@ -78,7 +79,7 @@ export default class Box {
    * @param {Array} [origin] The origin point to resize from.
    *      Defaults to [0, 0] (top left).
    */
-  scale(factor, origin = [0, 0]) {
+  scale(factor: any, origin = [0, 0]) {
     const newWidth = this.width() * factor;
     const newHeight = this.height() * factor;
     this.resize(newWidth, newHeight, origin);
@@ -96,8 +97,8 @@ export default class Box {
 
     this.x1 = x;
     this.y1 = y;
-    this.x2 = x + width;
-    this.y2 = y + height;
+    this.x2 = (x as any) + width;
+    this.y2 = (y as any) + height;
     return this;
   }
 
@@ -131,17 +132,17 @@ export default class Box {
    * @param {String} [grow] The axis to grow to maintain the ratio.
    *     Defaults to 'height'.
    */
-  constrainToRatio(ratio, origin = [0, 0], grow = 'height') {
+  constrainToRatio(ratio: any, origin = [0, 0], grow = "height") {
     if (ratio === null) {
       return;
     }
     const width = this.width();
     const height = this.height();
     switch (grow) {
-      case 'height': // Grow height only
+      case "height": // Grow height only
         this.resize(this.width(), this.width() * ratio, origin);
         break;
-      case 'width': // Grow width only
+      case "width": // Grow width only
         this.resize((this.height() * 1) / ratio, this.height(), origin);
         break;
       default: // Default: Grow height only
@@ -158,7 +159,11 @@ export default class Box {
    * @param {Array} [origin] The origin point to resize from.
    *     Defaults to [0, 0] (top left).
    */
-  constrainToBoundary(boundaryWidth, boundaryHeight, origin = [0, 0]) {
+  constrainToBoundary(
+    boundaryWidth: any,
+    boundaryHeight: any,
+    origin = [0, 0]
+  ) {
     // Calculate the maximum sizes for each direction of growth
     const [originX, originY] = this.getAbsolutePoint(origin);
     const maxIfLeft = originX;
@@ -172,16 +177,16 @@ export default class Box {
     const directionY = -2 * origin[1] + 1;
 
     // Determine the max size to use according to the direction of growth.
-    let [maxWidth, maxHeight] = [null, null];
+    let [maxWidth, maxHeight]: [any, any] = [null, null];
     switch (directionX) {
       case -1:
         maxWidth = maxIfLeft;
         break;
       case 0:
-        maxWidth = Math.min(maxIfLeft, maxIfRight) * 2;
+        maxWidth = (Math.min(maxIfLeft, maxIfRight) * 2) as any;
         break;
       case +1:
-        maxWidth = maxIfRight;
+        maxWidth = maxIfRight as any;
         break;
     }
     switch (directionY) {
@@ -189,10 +194,10 @@ export default class Box {
         maxHeight = maxIfTop;
         break;
       case 0:
-        maxHeight = Math.min(maxIfTop, maxIfBottom) * 2;
+        maxHeight = (Math.min(maxIfTop, maxIfBottom) * 2) as any;
         break;
       case +1:
-        maxHeight = maxIfBottom;
+        maxHeight = maxIfBottom as any;
         break;
     }
 
@@ -219,7 +224,14 @@ export default class Box {
    *     Defaults to [0, 0] (top left).
    * @param {Number} [ratio] Ratio to maintain.
    */
-  constrainToSize(maxWidth = null, maxHeight = null, minWidth = null, minHeight = null, origin = [0, 0], ratio = null) {
+  constrainToSize(
+    maxWidth: any = null,
+    maxHeight: any = null,
+    minWidth: any = null,
+    minHeight: any = null,
+    origin = [0, 0],
+    ratio: any = null
+  ) {
     // Calculate new max/min widths & heights that constrains to the ratio
     if (ratio) {
       if (ratio > 1) {

@@ -20,7 +20,7 @@ export default class Handle {
   eventBus: any;
   el: any;
 
-  constructor(position, constraints, cursor, eventBus) {
+  constructor(position: any, constraints: any, cursor: any, eventBus: any) {
     var self = this;
     this.position = position;
     this.constraints = constraints;
@@ -28,47 +28,47 @@ export default class Handle {
     this.eventBus = eventBus;
 
     // Create DOM element
-    this.el = document.createElement('div');
-    this.el.className = 'croppr-handle';
+    this.el = document.createElement("div");
+    this.el.className = "croppr-handle";
     this.el.style.cursor = cursor;
 
     // Attach initial listener
-    this.el.addEventListener('mousedown', onMouseDown);
+    this.el.addEventListener("mousedown", onMouseDown);
 
-    function onMouseDown(e) {
+    function onMouseDown(e: any) {
       e.stopPropagation();
-      document.addEventListener('mouseup', onMouseUp);
-      document.addEventListener('mousemove', onMouseMove);
+      document.addEventListener("mouseup", onMouseUp);
+      document.addEventListener("mousemove", onMouseMove);
 
       // Notify parent
       self.eventBus.dispatchEvent(
-        new CustomEvent('handlestart', {
+        new CustomEvent("handlestart", {
           detail: { handle: self },
-        }),
+        })
       );
     }
 
-    function onMouseUp(e) {
+    function onMouseUp(e: any) {
       e.stopPropagation();
-      document.removeEventListener('mouseup', onMouseUp);
-      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener("mouseup", onMouseUp);
+      document.removeEventListener("mousemove", onMouseMove);
 
       // Notify parent
       self.eventBus.dispatchEvent(
-        new CustomEvent('handleend', {
+        new CustomEvent("handleend", {
           detail: { handle: self },
-        }),
+        })
       );
     }
 
-    function onMouseMove(e) {
+    function onMouseMove(e: any) {
       e.stopPropagation();
 
       // Notify parent
       self.eventBus.dispatchEvent(
-        new CustomEvent('handlemove', {
+        new CustomEvent("handlemove", {
           detail: { mouseX: e.clientX, mouseY: e.clientY },
-        }),
+        })
       );
     }
   }
