@@ -35,10 +35,11 @@ const EditImage = memo(({ labels = {}, image = '', color = '#1e88e5', initialSta
 
 
   const observer = useRef<ResizeObserver | any>();
-  const updateStateRef = useRef<number>(0);
+  const isMobile = useRef<boolean>(false);
   const allFormats = ['webp', 'jpeg', 'png'];
 
   useEffect(() => {
+    isMobile.current = window.innerWidth < 800;
     setState(JSON.parse(JSON.stringify({ ...state, ...initialState })));
   }, [initialState])
 
@@ -283,7 +284,8 @@ const EditImage = memo(({ labels = {}, image = '', color = '#1e88e5', initialSta
           'boxSizing': 'border-box',
           display: 'flex',
           'placeContent': 'center flex-end',
-          'alignItems': 'center'
+          'alignItems': 'center',
+          padding: '0px 16px'
         }}>
         <button className="icon-btn" onClick={() => { onCloseEditPanel(false) }}>
           <span className="material-icons">clear</span>
@@ -312,77 +314,81 @@ const EditImage = memo(({ labels = {}, image = '', color = '#1e88e5', initialSta
         <div className="control-panel">
           <TabContainer lazy borderLine>
             <TabItem name="Basic">
-              <div style={{ display: 'flex', width: '100%', justifyContent: 'space-between' }}>
-                <p className="item-panel">{labels['Quality']}</p>
-                <p className="item-panel">{state.quality + '%'}</p>
-              </div>
-
-              <div className='flex-row-start'>
-                <Input readOnly={showCrop} disabled={showCrop}
-                  className="input-range"
-                  onChangedDelayed={onUpdateQuality}
-                  onChangedValue={(value: number) => { setState({ ...state, quality: value }) }}
-                  style={{
-                    maxWidth: '100%', width: '100%', color: color
-                  }}
-                  type="range"
-                  min={1}
-                  max={100}
-                  value={state.quality} />
-              </div>
-
-              <div className="item-panel" style={{ display: 'flex', width: '100%', justifyContent: 'space-between' }}>
-                {labels['Max dimensions']}
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <input type="checkbox" checked={state.maintainAspectRatio} onChange={(e) => setState({ ...state, maintainAspectRatio: e.target.checked })}
-                    style={{ color: color }} />
-                  <span className="caption">{labels['aspect-ratio']}</span>
-                </div>
-              </div>
-
-              <div className='flex-row-start' style={{ marginTop: '10px', justifyContent: 'space-between' }}>
-                <div className="form-field" style={{ maxWidth: '48%', width: '48%' }}>
-                  <label>{labels['max-width(px)']}</label>
-                  <Input
-                    readOnly={showCrop}
-                    disabled={showCrop}
-                    placeholder={labels['max-width(px)']}
-                    value={state.maxWidth}
-                    onChangedValue={(value: number) => setState({ ...state, maxWidth: value })}
-                    type="number"
-                    min={0}
-                    max={2000}
-                    onInputChangedEnd={(value: number) => { onChangeSize(value, false) }}
-                  />
+              {(!isMobile.current || (isMobile.current && !showCrop)) &&
+                (<React.Fragment><div style={{ display: 'flex', width: '100%', justifyContent: 'space-between' }}>
+                  <p className="item-panel">{labels['Quality']}</p>
+                  <p className="item-panel">{state.quality + '%'}</p>
                 </div>
 
+                  <div className='flex-row-start'>
+                    <Input readOnly={showCrop} disabled={showCrop}
+                      className="input-range"
+                      onChangedDelayed={onUpdateQuality}
+                      onChangedValue={(value: number) => { setState({ ...state, quality: value }) }}
+                      style={{
+                        maxWidth: '100%', width: '100%', color: color
+                      }}
+                      type="range"
+                      min={1}
+                      max={100}
+                      value={state.quality} />
+                  </div>
 
-                <div className="form-field" style={{ maxWidth: '48%', width: '48%' }}>
-                  <label>{labels['max-height(px)']}</label>
-                  <Input
-                    readOnly={showCrop}
-                    disabled={showCrop}
-                    placeholder={labels['max-height(px)']}
-                    value={state.maxHeight}
-                    onChangedValue={(value: number) => setState({ ...state, maxHeight: value })}
-                    type="number"
-                    min={0}
-                    max={2000}
-                    onInputChangedEnd={(value: number) => { onChangeSize(value, true) }}
-                  />
-                </div>
-              </div>
+                  <div className="item-panel" style={{ display: 'flex', width: '100%', justifyContent: 'space-between' }}>
+                    {labels['Max dimensions']}
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                      <input disabled={showCrop} readOnly={showCrop}
+                        type="checkbox" checked={state.maintainAspectRatio}
+                        onChange={(e) => setState({ ...state, maintainAspectRatio: e.target.checked })}
+                        style={{ color: color }} />
+                      <span className="caption">{labels['aspect-ratio']}</span>
+                    </div>
+                  </div>
 
-              <p className="item-panel">{labels['Format']}</p>
-              <div className='flex-row-start' style={{ marginTop: '10px', justifyContent: 'space-between' }}>
-                <div className="form-field" style={{ width: '100%' }}>
-                  <select disabled={showCrop} value={state.format} onChange={onChangeFormat}>
-                    {allFormats.map((formatItem, index) => (
-                      <option key={index} value={formatItem}>{formatItem}</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
+                  <div className='flex-row-start' style={{ marginTop: '10px', justifyContent: 'space-between' }}>
+                    <div className="form-field" style={{ maxWidth: '48%', width: '48%' }}>
+                      <label>{labels['max-width(px)']}</label>
+                      <Input
+                        readOnly={showCrop}
+                        disabled={showCrop}
+                        placeholder={labels['max-width(px)']}
+                        value={state.maxWidth}
+                        onChangedValue={(value: number) => setState({ ...state, maxWidth: value })}
+                        type="number"
+                        min={0}
+                        max={2000}
+                        onInputChangedEnd={(value: number) => { onChangeSize(value, false) }}
+                      />
+                    </div>
+
+
+                    <div className="form-field" style={{ maxWidth: '48%', width: '48%' }}>
+                      <label>{labels['max-height(px)']}</label>
+                      <Input
+                        readOnly={showCrop}
+                        disabled={showCrop}
+                        placeholder={labels['max-height(px)']}
+                        value={state.maxHeight}
+                        onChangedValue={(value: number) => setState({ ...state, maxHeight: value })}
+                        type="number"
+                        min={0}
+                        max={2000}
+                        onInputChangedEnd={(value: number) => { onChangeSize(value, true) }}
+                      />
+                    </div>
+                  </div>
+
+                  <p className="item-panel">{labels['Format']}</p>
+                  <div className='flex-row-start' style={{ marginTop: '10px', justifyContent: 'space-between' }}>
+                    <div className="form-field" style={{ width: '100%' }}>
+                      <select disabled={showCrop} value={state.format} onChange={onChangeFormat}>
+                        {allFormats.map((formatItem, index) => (
+                          <option key={index} value={formatItem}>{formatItem}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                </React.Fragment>)}
 
               <div className='flex-row-start' style={{ marginTop: '5px', justifyContent: 'space-between' }}>
                 <span style={{ display: 'flex', alignItems: 'center' }}>
@@ -427,7 +433,7 @@ const EditImage = memo(({ labels = {}, image = '', color = '#1e88e5', initialSta
                 </React.Fragment>
               }
             </TabItem>
-            <TabItem name="Filters">
+            <TabItem disabled={showCrop} name="Filters">
               <BasicFilter color={color} labels={labels} initialState={state.basicFilters} changeFilter={onChangeFilters}></BasicFilter>
             </TabItem>
           </TabContainer>

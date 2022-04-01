@@ -17,7 +17,7 @@
     left: 0;
     background-color: rgba(0, 0, 0, .8);
     z-index: 1000;
-    padding: 24px;
+    padding: 24px 16px;
     color: white;
     box-sizing: border-box;
     animation-name: show;
@@ -46,12 +46,11 @@
     }
 
     img {
-      max-height: 600px;
+      vertical-align: middle;
+      max-height: 650px;
       max-width: 100%;
       object-fit: cover;
       object-position: center;
-      margin: 8px;
-      transition: all .5s ease;
     }
 
     @media (max-width:1024px) {
@@ -75,7 +74,7 @@
     .control-panel {
       color: #fff;
       background-color: rgba(0, 0, 0, .92);
-      margin: 8px;
+      margin: 0px 16px;
       padding: 16px;
       max-width: 100%;
       width: 18rem;
