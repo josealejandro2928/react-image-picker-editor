@@ -21,16 +21,6 @@ or yarn
 yarn add react-image-picker-editor
 ```
 
-### External Resource
-
-`ReactImagePickerEditor`, for use the functionality of cropping images, the ResizeObserver api is used
-The ResizeObserver interface reports changes to the dimensions of an Element's content or border box, or the bounding box of an SVGElement.
-Install the package
-
-```sh
-npm i resize-observer-polyfill --save
-```
-
 ### Usages
 
 You must import the following where you will use it:
