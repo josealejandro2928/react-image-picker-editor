@@ -64,7 +64,8 @@ import 'react-image-picker-editor/dist/index.css'
       imageChanged={(newDataUri: any) => { setImageSrc(newDataUri) }} />
 ```
 
-![Image 1](https://ngp-image-picker.surge.sh/assets/images/1.png)
+<!-- ![Image 1](https://ngp-image-picker.surge.sh/assets/images/1.png) -->
+![1](https://user-images.githubusercontent.com/37028825/165946155-66c83156-418b-4d41-b681-48e5b141f818.png)
 
 ### More about the component
 
@@ -139,19 +140,30 @@ Another capability is that you can crop the image by simply dragging and droppin
 
 🔥🔥🔥🔥🔥 You can have in your website a component like the instagram or linkedin for editing your images. 🔥🔥🔥🔥🔥
 
-![Image 1](https://ngp-image-picker.surge.sh/assets/images/tab-section.png)
-![Image 2](https://ngp-image-picker.surge.sh/assets/images/2.png)
+<!-- ![Image 1](https://ngp-image-picker.surge.sh/assets/images/tab-section.png) -->
+![tab-section](https://user-images.githubusercontent.com/37028825/165946293-5cf3635d-51a6-44cd-bf85-2539377a37db.png)
+
+<!-- ![Image 2](https://ngp-image-picker.surge.sh/assets/images/2.png) -->
+![2](https://user-images.githubusercontent.com/37028825/165946318-10abdfe4-254f-4f7c-8df1-64ece3f15308.png)
 
 ### Control section
 
-![Image 3](https://ngp-image-picker.surge.sh/assets/images/n-1.png)
-![Image 3](https://ngp-image-picker.surge.sh/assets/images/n-2.png)
-![Image 3](https://ngp-image-picker.surge.sh/assets/images/n-3.png)
-![Image 3](https://ngp-image-picker.surge.sh/assets/images/n-4.png)
+<!-- ![Image 3](https://ngp-image-picker.surge.sh/assets/images/n-1.png) -->
+![n-1](https://user-images.githubusercontent.com/37028825/165946368-efca01c1-07b5-4e12-ae65-7218dc5a4021.png)
+
+<!-- ![Image 3](https://ngp-image-picker.surge.sh/assets/images/n-2.png) -->
+![n-2](https://user-images.githubusercontent.com/37028825/165946403-8b31065a-8369-4211-9774-92bbe075d608.png)
+
+<!-- ![Image 3](https://ngp-image-picker.surge.sh/assets/images/n-3.png) -->
+![n-3](https://user-images.githubusercontent.com/37028825/165946448-6bc0922a-a4e1-4691-953e-8058deef338b.png)
+
+<!-- ![Image 3](https://ngp-image-picker.surge.sh/assets/images/n-4.png) -->
+![n-4](https://user-images.githubusercontent.com/37028825/165946487-5cb954db-92e3-4ce2-8432-add386f8ec22.png)
 
 ### Croping images
 
-![Image 4](https://ngp-image-picker.surge.sh/assets/images/5.png)
+<!-- ![Image 4](https://ngp-image-picker.surge.sh/assets/images/5.png) -->
+![5](https://user-images.githubusercontent.com/37028825/165946595-d5f04d40-bd38-45fa-aeb1-c607dc524fdc.png)
 
 #### [DEMO](https://ngp-image-picker.surge.sh/)
 
