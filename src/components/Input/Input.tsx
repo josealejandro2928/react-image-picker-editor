@@ -32,14 +32,10 @@ const Input = memo((props: React.InputHTMLAttributes<any> | InputProps) => {
       return;
     }
 
-    if (flagRef.current) {
-      return;
-    }
+    clearTimeout(timerRef.current);
     timerRef.current = setTimeout(() => {
-      flagRef.current = true;
       clearTimeout(timerRef.current);
       onChangedDelayed(state);
-      flagRef.current = false;
     }, delayMs || 100)
 
     return () => {

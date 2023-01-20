@@ -169,7 +169,7 @@ Another capability is that you can crop the image by simply dragging and droppin
 
 ##### Stackblitz example
 
-#### [stackblitz example](https://stackblitz.com/edit/react-ts-ww1wtm?file=index.tsx)
+#### [stackblitz example](https://stackblitz.com/edit/react-image-picker-editor-example-usage?file=App.tsx)
 
 ##### Angular version
 

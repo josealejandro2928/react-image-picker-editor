@@ -1,6 +1,6 @@
 {
   "name": "react-image-picker-editor",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "React library for the selection, edition and compression of images in png, jpeg and webp formats.",
   "author": "josealejandro2928",
   "license": "MIT",

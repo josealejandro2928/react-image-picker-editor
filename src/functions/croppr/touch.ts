@@ -9,9 +9,9 @@
  * @param {Element} element
  */
 export default function enableTouch(element: any) {
-  element.addEventListener("touchstart", simulateMouseEvent);
-  element.addEventListener("touchend", simulateMouseEvent);
-  element.addEventListener("touchmove", simulateMouseEvent);
+  element.addEventListener('touchstart', simulateMouseEvent);
+  element.addEventListener('touchend', simulateMouseEvent);
+  element.addEventListener('touchmove', simulateMouseEvent);
 }
 
 /**
@@ -21,10 +21,10 @@ export default function enableTouch(element: any) {
 function simulateMouseEvent(e: any) {
   e.preventDefault();
   const touch = e.changedTouches[0];
-  const eventMap = {
-    touchstart: "mousedown",
-    touchmove: "mousemove",
-    touchend: "mouseup",
+  const eventMap: any = {
+    touchstart: 'mousedown',
+    touchmove: 'mousemove',
+    touchend: 'mouseup',
   };
 
   touch.target.dispatchEvent(
@@ -36,6 +36,6 @@ function simulateMouseEvent(e: any) {
       clientY: touch.clientY,
       screenX: touch.screenX,
       screenY: touch.screenY,
-    })
+    }),
   );
 }
