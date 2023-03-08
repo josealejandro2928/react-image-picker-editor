@@ -6,7 +6,7 @@ function Header(): JSX.Element {
     <>
       <div className='Header'>
         <div className='section' style={{ flex: '1 0 100%', maxWidth: '100%' }}>
-          <img className='logo' src="assets/images/logo.svg" alt='logo' />
+          <img className='logo' src="vite.svg" alt='logo' />
           <span className='title'>react-image-picker-editor</span>
         </div>
 

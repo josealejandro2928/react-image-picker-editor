@@ -62,7 +62,7 @@ const BasicFilter = memo(({ labels, color, initialState = _initialState, changeF
       <Input
         className="input-range"
         onChangedDelayed={onUpdateContrast}
-        delayMs={150}
+        delayMs={100}
         onChangedValue={(value: number) => { setState({ ...state, contrast: value }) }}
         style={{
           maxWidth: '100%', width: '100%', color: color

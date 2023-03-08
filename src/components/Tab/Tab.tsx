@@ -4,7 +4,7 @@ import './styles.scss'
 import { useRef } from 'react';
 
 export interface TabContainerProp {
-  children: Array<{ props: any }> | { props: any };
+  children: Array<JSX.Element> | JSX.Element;
   activeIndex?: number;
   backgroundColor?: string;
   color?: string;

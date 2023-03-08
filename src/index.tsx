@@ -42,7 +42,7 @@ const ReactImagePickerEditor = memo(({ config = {}, imageSrcProp = '', color = '
   const fileType = useRef('')
   const urlImage = useRef('')
   const uuidFilePicker = Date.now().toString(20);
-  const imageName = useRef('donload');
+  const imageName = useRef('download');
 
 
   useEffect(() => {
