@@ -17,21 +17,27 @@ const initialConfig: ImagePickerConf = {
   hideDownloadBtn: false,
   hideEditBtn: false,
   hideAddBtn: false,
+  compressInitial: null
+}
+
+const initialState: IState = {
+  maxHeight: 3000,
+  maxWidth: 3000,
+  cropHeight: 150,
+  cropWidth: 150,
+  maintainAspectRatio: true,
+  format: 'jpeg',
+  arrayCopiedImages: [],
+  originImageSrc: '',
+  basicFilters: undefined,
+  quality: 100
 }
 
 const ReactImagePickerEditor = memo(({ config = {}, imageSrcProp = '', color = '#1e88e5', imageChanged = () => { } }:
   { config: ImagePickerConf, imageSrcProp?: string, color?: string; imageChanged?: Function; }) => {
 
   const [state, setState] = useState<IState>({
-    quality: 92,
-    maxHeight: 1000,
-    maxWidth: 1000,
-    cropHeight: 150,
-    cropWidth: 150,
-    maintainAspectRatio: true,
-    format: 'jpeg',
-    arrayCopiedImages: [],
-    originImageSrc: '',
+    ...initialState,
   })
   const [imageSrc, setImageSrc] = useState<string | null>('')
   const [loadImage, setLoadImage] = useState<boolean>(false)
@@ -43,6 +49,7 @@ const ReactImagePickerEditor = memo(({ config = {}, imageSrcProp = '', color = '
   const urlImage = useRef('')
   const uuidFilePicker = Date.now().toString(20);
   const imageName = useRef('download');
+  const mounted = useRef(false);
 
 
   useEffect(() => {
@@ -52,6 +59,8 @@ const ReactImagePickerEditor = memo(({ config = {}, imageSrcProp = '', color = '
 
 
   useEffect(() => {
+    if (mounted.current) return;
+    mounted.current = true;
     (async () => {
       if (imageSrcProp) {
         let result = await parseToBase64(imageSrcProp);
@@ -65,6 +74,8 @@ const ReactImagePickerEditor = memo(({ config = {}, imageSrcProp = '', color = '
           format: newState.format,
           originImageSrc: imageSrcProp,
         });
+
+        console.log("NEW STATE", newState)
         setImageSrc(result.imageUri)
         setState(newState);
         setLoadImage(true);
@@ -72,16 +83,6 @@ const ReactImagePickerEditor = memo(({ config = {}, imageSrcProp = '', color = '
         let newState = { ...state };
         newState.originImageSrc = null;
         newState.arrayCopiedImages = [];
-        newState = {
-          ...newState,
-          format: 'jpeg',
-          maxHeight: 1000,
-          maxWidth: 1000,
-          cropHeight: 150,
-          cropWidth: 150,
-          maintainAspectRatio: true,
-          basicFilters: undefined
-        };
         setLoadImage(false);
         setImageSrc(null);
         setState(newState);
@@ -90,12 +91,14 @@ const ReactImagePickerEditor = memo(({ config = {}, imageSrcProp = '', color = '
   }, [imageSrcProp])
 
 
+  useEffect(() => {
+    imageChanged(imageSrc)
+  }, [imageSrc])
 
 
   function processConfig() {
     let dataConf = { ...configuration, ...config };
     setConfiguration(dataConf);
-    // console.log("🚀 ~ file: index.tsx ~ line 52 ~ processConfig ~ dataConf", dataConf)
 
     if (config.language != undefined) {
       if (config.language == 'en') {
@@ -163,7 +166,6 @@ const ReactImagePickerEditor = memo(({ config = {}, imageSrcProp = '', color = '
       let result = await convertImageUsingCanvas(newState.originImageSrc as string, false, newState, { getDimFromImage: true });
       setState(result.state);
       setImageSrc(result.imageUri);
-      imageChanged(result.imageUri);
       setLoadImage(true);
     } else {
       let img = document.createElement('img');
@@ -183,7 +185,6 @@ const ReactImagePickerEditor = memo(({ config = {}, imageSrcProp = '', color = '
         });
         setState(newState);
         setImageSrc(newImageSrc);
-        imageChanged(newImageSrc);
         setLoadImage(true);
       };
     }
@@ -198,7 +199,7 @@ const ReactImagePickerEditor = memo(({ config = {}, imageSrcProp = '', color = '
   }, [imageSrc])
 
   function parseToBase64(imageUrl: string): Promise<{ imageUri: string; state: IState }> {
-    let newState = { ...state };
+    let newState = { ...state }
     let types = imageUrl.split('.');
     let type = types[types.length - 1];
     if (type && (type == 'png' || type == 'jpeg' || type == 'webp')) {
@@ -207,6 +208,13 @@ const ReactImagePickerEditor = memo(({ config = {}, imageSrcProp = '', color = '
       type = 'jpeg';
     }
     newState.format = type;
+    if (config.compressInitial != null) {
+      let quality = 1;
+      if (config.compressInitial >= 0 && config.compressInitial <= 100) {
+        quality = config.compressInitial;
+      }
+      newState.quality = quality;
+    }
 
     return new Promise((resolve, reject) => {
       let img = new Image();
@@ -221,7 +229,8 @@ const ReactImagePickerEditor = memo(({ config = {}, imageSrcProp = '', color = '
         canvas.width = img.width * ratio;
         canvas.height = img.height * ratio;
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-        let dataURI = canvas.toDataURL(`image/${type}`, newState.quality);
+        console.log(newState.quality);
+        let dataURI = canvas.toDataURL(`image/${type}`, newState.quality / 100);
         return resolve({
           dataUri: dataURI,
           width: canvas.width,
@@ -251,26 +260,15 @@ const ReactImagePickerEditor = memo(({ config = {}, imageSrcProp = '', color = '
     if (data) {
       setState(data.state)
       setImageSrc(data.imageSrc);
-      imageChanged(data.imageSrc);
     }
   }
 
   function onRemove() {
     setImageSrc(null);
     setLoadImage(false);
-    imageChanged(null);
     const newState: IState = {
       ...state,
-      originImageSrc: '',
-      format: 'jpeg',
-      maxHeight: 1000,
-      maxWidth: 1000,
-      cropHeight: 150,
-      cropWidth: 150,
-      maintainAspectRatio: true,
-      arrayCopiedImages: [],
-      basicFilters: undefined,
-      quality: 92,
+      ...initialState
     };
     setState(newState);
     setShowEditPanel(false)

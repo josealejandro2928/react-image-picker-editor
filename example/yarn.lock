@@ -617,10 +617,6 @@ react-dom@^18.2.0:
     loose-envify "^1.1.0"
     scheduler "^0.23.0"
 
-react-image-picker-editor@../react-image-picker-editor-1.2.5.tgz:
-  version "1.2.5"
-  resolved "../react-image-picker-editor-1.2.5.tgz#9dd8401b4418c225f0a0a9f0d8e1c9db774b516e"
-
 react-refresh@^0.14.0:
   version "0.14.0"
   resolved "https://registry.npmjs.org/react-refresh/-/react-refresh-0.14.0.tgz#4e02825378a5f227079554d4284889354e5f553e"

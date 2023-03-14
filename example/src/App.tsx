@@ -7,14 +7,23 @@ import Header from './components/Header/Header';
 
 const App = () => {
 
-  const config2: ImagePickerConf = {
+  const config1: ImagePickerConf = {
     borderRadius: '8px',
     language: 'en',
     width: '280px',
     height: '200px',
     objectFit: 'contain',
     // aspectRatio: 4 / 3,
-    compressInitial: null,
+    compressInitial: 85
+  };
+
+  const config2: ImagePickerConf = {
+    borderRadius: "50%",
+    language: 'en',
+    objectFit: 'contain',
+    height: '200px',
+    width: "200px",
+    compressInitial: null
   };
 
   const [imageSrc, setImageSrc] = useState<string | null | undefined>('');
@@ -29,7 +38,7 @@ const App = () => {
       <div className="left">
         <p>Pick and edit an image:</p>
         < ReactImagePickerEditor
-          config={config2}
+          config={config1}
           imageChanged={(newDataUri: any) => { setImageSrc(newDataUri) }} />
       </div>
       <div className="right">
@@ -45,7 +54,7 @@ const App = () => {
         <p>Pick and edit an image:</p>
         < ReactImagePickerEditor
           imageSrcProp='https://upload.wikimedia.org/wikipedia/commons/e/ef/LYF_WATER_2_Smartphone.JPG'
-          config={{ ...config2, borderRadius: "50%", width: "200px" }}
+          config={config2}
           imageChanged={(newDataUri: any) => { setImageSrc2(newDataUri) }} />
       </div>
       <div className="right">
