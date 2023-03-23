@@ -59,36 +59,35 @@ const ReactImagePickerEditor = memo(({ config = {}, imageSrcProp = '', color = '
 
 
   useEffect(() => {
-    if (mounted.current) return;
-    mounted.current = true;
-    (async () => {
-      if (imageSrcProp) {
-        let result = await parseToBase64(imageSrcProp);
-        let newState: IState = result.state;
-        newState.originImageSrc = imageSrcProp;
-        newState.arrayCopiedImages.push({
-          lastImage: result.imageUri,
-          width: newState.maxWidth,
-          height: newState.maxHeight,
-          quality: newState.quality,
-          format: newState.format,
-          originImageSrc: imageSrcProp,
-        });
-
-        console.log("NEW STATE", newState)
-        setImageSrc(result.imageUri)
-        setState(newState);
-        setLoadImage(true);
-      } else {
-        let newState = { ...state };
-        newState.originImageSrc = null;
-        newState.arrayCopiedImages = [];
-        setLoadImage(false);
-        setImageSrc(null);
-        setState(newState);
-      }
-    })()
+    loadImageFromProps();
   }, [imageSrcProp])
+
+  async function loadImageFromProps() {
+    if (imageSrcProp) {
+      let result = await parseToBase64(imageSrcProp);
+      let newState: IState = result.state;
+      newState.originImageSrc = imageSrcProp;
+      newState.arrayCopiedImages = [{
+        lastImage: result.imageUri,
+        width: newState.maxWidth,
+        height: newState.maxHeight,
+        quality: newState.quality,
+        format: newState.format,
+        originImageSrc: imageSrcProp,
+      }]
+      // console.log("NEW STATE", newState)
+      setImageSrc(result.imageUri)
+      setState(newState);
+      setLoadImage(true);
+    } else {
+      let newState = { ...state };
+      newState.originImageSrc = null;
+      newState.arrayCopiedImages = [];
+      setLoadImage(false);
+      setImageSrc(null);
+      setState(newState);
+    }
+  }
 
 
   useEffect(() => {

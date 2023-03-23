@@ -4,6 +4,8 @@ import ReactImagePickerEditor, { ImagePickerConf } from 'react-image-picker-edit
 
 import 'react-image-picker-editor/dist/index.css'
 import Header from './components/Header/Header';
+import img1 from './assets/images/1.jpg';
+import img2 from './assets/images/2.jpg';
 
 const App = () => {
 
@@ -23,11 +25,12 @@ const App = () => {
     objectFit: 'contain',
     height: '200px',
     width: "200px",
-    compressInitial: null
+    compressInitial: 50
   };
 
   const [imageSrc, setImageSrc] = useState<string | null | undefined>('');
   const [imageSrc2, setImageSrc2] = useState<string | null | undefined>('');
+  const [logo, setLogo] = useState<string | null | undefined>(img1);
 
 
 
@@ -53,13 +56,18 @@ const App = () => {
       <div className="left">
         <p>Pick and edit an image:</p>
         < ReactImagePickerEditor
-          imageSrcProp='https://upload.wikimedia.org/wikipedia/commons/e/ef/LYF_WATER_2_Smartphone.JPG'
+          imageSrcProp={logo as any}
           config={config2}
           imageChanged={(newDataUri: any) => { setImageSrc2(newDataUri) }} />
       </div>
       <div className="right">
         <p>Output from the component:</p>
         {imageSrc2 && <img src={imageSrc2} height={200} />}
+        <p>Image loaded: <strong>{logo}</strong></p>
+        <button onClick={()=>{
+          if(logo == img1) setLogo(img2);
+          if(logo == img2) setLogo(img1);
+        }}>Load another image from internal</button>
       </div>
     </div>
 
