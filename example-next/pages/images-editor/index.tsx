@@ -1,7 +1,7 @@
 import Head from 'next/head'
 import Link from 'next/link'
 import { ImagePickerConf } from 'react-image-picker-editor'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import styles from './index.module.scss'
 import 'react-image-picker-editor/dist/index.css'
 
@@ -20,7 +20,7 @@ const ImagesEditor = () => {
         height: '200px',
         objectFit: 'contain',
         // aspectRatio: 4 / 3,
-        compressInitial: 85
+        compressInitial: 92
     };
     const [imagesArray, setImagesArray] = useState<Array<string | null | undefined>>([null, null, null]);
 
