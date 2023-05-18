@@ -354,6 +354,7 @@ const ReactImagePickerEditor = memo(({ config = {}, imageSrcProp = '', color = '
           {!configuration.hideEditBtn &&
             <button
               className="icon-btn"
+	      type="button"
               id="edit-img"
               title={labels['Open the editor panel']}
               onClick={onOpenEditPanel}
