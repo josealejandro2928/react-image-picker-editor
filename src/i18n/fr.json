@@ -13,6 +13,7 @@
   "max-height(px)": "hauteur max",
   "Format": "Format",
   "Crop": "Recadrer",
+  "Confirm Crop": "Confirmer le recadrage",
   "width(px)": "largeur(px)",
   "height(px)": "hauteur(px)",
   "Save": "Sauvez",
@@ -22,5 +23,7 @@
   "Grayscale": "Grayscale",
   "Saturate": "Saturer",
   "Sepia": "Seiche",
-  "Undo": "Annuler"
+  "Undo": "Annuler",
+  "Basic": "Basique",
+  "Filters": "Filtres"
 }
