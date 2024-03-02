@@ -12,6 +12,7 @@
   "max-height(px)": "max-height(px)",
   "Format": "Format",
   "Crop": "Crop",
+  "Confirm Crop": "Confirm Crop",
   "width(px)": "width(px)",
   "height(px)": "height(px)",
   "Remove": "Remove",
@@ -23,5 +24,7 @@
   "Saturate": "Saturate",
   "Sepia": "Sepia",
   "Rotate": "Rotate",
-  "Undo": "Undo"
+  "Undo": "Undo",
+  "Basic": "Basic",
+  "Filters": "Filters"
 }

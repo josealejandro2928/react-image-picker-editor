@@ -61,7 +61,6 @@
   "files": [
     "dist"
   ],
-  "dependencies": {},
   "keywords": [
     "react",
     "image picker",

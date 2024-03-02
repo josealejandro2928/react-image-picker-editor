@@ -3,6 +3,7 @@ import React, { memo, useEffect, useMemo, useRef, useState } from "react"
 import { ImagePickerConf, IState } from "./models/index.models";
 import './styles.scss'
 import labelEs from './i18n/es.json';
+import labelPT from './i18n/pt.json';
 import labelEn from './i18n/en.json';
 import labelFr from './i18n/fr.json';
 import labelDe from './i18n/de.json';
@@ -102,6 +103,9 @@ const ReactImagePickerEditor = memo(({ config = {}, imageSrcProp = '', color = '
     if (config.language != undefined) {
       if (config.language == 'en') {
         setLabels({ ...labelEn });
+      }
+      if (config.language == 'pt') {
+        setLabels({ ...labelPT })
       }
       if (config.language == 'es') {
         setLabels({ ...labelEs });
@@ -289,7 +293,7 @@ const ReactImagePickerEditor = memo(({ config = {}, imageSrcProp = '', color = '
             <span className="material-icons">add_a_photo</span>
           </button>
 
-          <input ref={imagePicker} type="file" style={{ "display": "none" }} id={'filePicker-' + uuidFilePicker} onChange={handleFileSelect} />
+          <input ref={imagePicker} type="file" accept="image/*" style={{ "display": "none" }} id={'filePicker-' + uuidFilePicker} onChange={handleFileSelect} />
         </div>
       </div >
     }
@@ -316,66 +320,59 @@ const ReactImagePickerEditor = memo(({ config = {}, imageSrcProp = '', color = '
               <span className="material-icons">add_a_photo</span>
             </button>
           </div>
-          <input ref={imagePicker} type="file" style={{ "display": "none" }} id={'filePicker-' + uuidFilePicker} onChange={handleFileSelect} />
+          <input ref={imagePicker} type="file" accept="image/*" style={{ "display": "none" }} id={'filePicker-' + uuidFilePicker} onChange={handleFileSelect} />
         </div>
-        {sizeImage &&
-          <p
-            className="caption image-caption"
-            style={{
-              color: sizeImage > 120 ? '#f44336' : 'unset',
-              fontWeight: sizeImage > 120 ? '500' : 'unset'
-
-            }}
-          >
-            size: {sizeImage}Kb &nbsp; {state.format}
-          </p>}
-
-
         <div
-          style={{
-            flexDirection: 'row', 'boxSizing': 'border-box',
-            display: 'flex',
-            'placeContent': 'flex-start',
-            'alignItems': 'flex-start'
-          }}
-          className="editing-bar-btn"
-        >
-          {!configuration.hideAddBtn &&
-            <button
-              className="icon-btn"
-              id="upload-img"
-              title={labels['Upload a image']}
-              onClick={onUpload}
-            >
-              <span className="material-icons">add_a_photo</span>
-            </button>
-          }
+            style={{
+              flexDirection: 'column', 
+              'boxSizing': 'border-box',
+              display: 'flex',
+              'placeContent': 'center',
+              'alignItems': 'center',
+              gap: "5%",
+              background: "#000",
+              borderTopRightRadius: "7px",
+              borderBottomRightRadius: "7px",
+              height: configuration.height
+            }}
+            className="editing-bar-btn"
+          >
+            {!configuration.hideAddBtn &&
+              <button
+                className="icon-btn"
+                id="upload-img"
+                title={labels['Upload a image']}
+                onClick={onUpload}
+              >
+                <span className="material-icons">add_a_photo</span>
+              </button>
+            }
 
-          {!configuration.hideEditBtn &&
-            <button
-              className="icon-btn"
-              id="edit-img"
-              title={labels['Open the editor panel']}
-              onClick={onOpenEditPanel}
-            >
-              <span className="material-icons">edit</span>
-            </button>
-          }
-          {!configuration.hideDownloadBtn &&
-            <a id="download-img"
-              title={labels['Download the image']}
-              href={imageSrc as string}
-              download={imageName.current}
-            >
-              <span className="material-icons">cloud_download</span>
-            </a>
-          }
+            {!configuration.hideEditBtn &&
+              <button
+                className="icon-btn"
+                id="edit-img"
+                title={labels['Open the editor panel']}
+                onClick={onOpenEditPanel}
+              >
+                <span className="material-icons">edit</span>
+              </button>
+            }
+            {!configuration.hideDownloadBtn &&
+              <a id="download-img"
+                title={labels['Download the image']}
+                href={imageSrc as string}
+                download={imageName.current}
+              >
+                <span className="material-icons">cloud_download</span>
+              </a>
+            }
 
-          {!configuration.hideDeleteBtn &&
-            <button className="icon-btn" id="delete-img" title={labels['Remove']} onClick={() => onRemove()} >
-              <span className="material-icons">delete</span>
-            </button>
-          }
+            {!configuration.hideDeleteBtn &&
+              <button className="icon-btn" id="delete-img" title={labels['Remove']} onClick={() => onRemove()} >
+                <span className="material-icons">delete</span>
+              </button>
+            }
 
         </div>
       </div>

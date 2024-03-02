@@ -12,6 +12,7 @@
   "max-height(px)": "Max. Höhe(px)",
   "Format": "Format",
   "Crop": "Zuschneiden",
+  "Confirm Crop": "Schnitt bestätigen",
   "width(px)": "Breite(px)",
   "height(px)": "Höhe(px)",
   "Remove": "Entfernen",
@@ -22,5 +23,7 @@
   "Grayscale": "Graustufen",
   "Saturer": "Sättigen",
   "Sepia": "Tintenfisch",
-  "Undo": "Undo"
+  "Undo": "Undo",
+  "Basic": "Einfach",
+  "Filters": "Filter"
 }
