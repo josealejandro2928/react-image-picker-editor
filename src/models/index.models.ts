@@ -44,3 +44,9 @@ export interface IBasicFilterState {
   saturate: number;
   sepia: number;
 }
+
+export interface ImagePickerEditorRef {
+  onRemove: () => void;
+  onOpenEditPanel: () => void;
+  handleFileSelect: (event: React.ChangeEvent<HTMLInputElement>) => void;
+}

@@ -8,7 +8,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { ImagePickerConf, IState } from "./models/index.models";
+import { ImagePickerConf, ImagePickerEditorRef, IState } from "./models/index.models";
 import "./styles.scss";
 import labelEs from "./i18n/es.json";
 import labelPT from "./i18n/pt.json";
@@ -18,11 +18,6 @@ import labelDe from "./i18n/de.json";
 import { convertImageUsingCanvas } from "./functions/image-processing";
 import EditImage from "./components/EditImage/EditImage";
 export * from "./models/index.models";
-
-type ReactImagePickerEditorRef = {
-  handleFileSelect: (event: React.ChangeEvent<HTMLInputElement>) => void;
-};
-
 
 const initialConfig: ImagePickerConf = {
   language: "en",
@@ -48,7 +43,7 @@ const initialState: IState = {
 };
 
 const ReactImagePickerEditor = memo(
-  forwardRef(
+  forwardRef<ImagePickerEditorRef>(
     (
       {
         config = {},
@@ -306,11 +301,9 @@ const ReactImagePickerEditor = memo(
       }
 
       useImperativeHandle(ref, () => ({
+        onRemove,
         onOpenEditPanel,
         handleFileSelect,
-        onCloseEditPanel,
-        onRemove,
-        onUpload
       }));
 
       return (
