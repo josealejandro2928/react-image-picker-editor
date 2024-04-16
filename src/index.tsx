@@ -19,6 +19,11 @@ import { convertImageUsingCanvas } from "./functions/image-processing";
 import EditImage from "./components/EditImage/EditImage";
 export * from "./models/index.models";
 
+type ReactImagePickerEditorRef = {
+  handleFileSelect: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onOpenEditPanel: () => void;
+};
+
 const initialConfig: ImagePickerConf = {
   language: "en",
   objectFit: "cover",
@@ -43,7 +48,7 @@ const initialState: IState = {
 };
 
 const ReactImagePickerEditor = memo(
-  forwardRef(
+  forwardRef<ReactImagePickerEditorRef>(
     (
       {
         config = {},
@@ -303,9 +308,6 @@ const ReactImagePickerEditor = memo(
       useImperativeHandle(ref, () => ({
         onOpenEditPanel,
         handleFileSelect,
-        onCloseEditPanel,
-        onRemove,
-        onUpload
       }));
 
       return (
