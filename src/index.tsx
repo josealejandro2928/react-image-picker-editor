@@ -21,8 +21,8 @@ export * from "./models/index.models";
 
 type ReactImagePickerEditorRef = {
   handleFileSelect: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  onOpenEditPanel: () => void;
 };
+
 
 const initialConfig: ImagePickerConf = {
   language: "en",
@@ -48,7 +48,7 @@ const initialState: IState = {
 };
 
 const ReactImagePickerEditor = memo(
-  forwardRef<ReactImagePickerEditorRef>(
+  forwardRef(
     (
       {
         config = {},
@@ -308,6 +308,9 @@ const ReactImagePickerEditor = memo(
       useImperativeHandle(ref, () => ({
         onOpenEditPanel,
         handleFileSelect,
+        onCloseEditPanel,
+        onRemove,
+        onUpload
       }));
 
       return (
