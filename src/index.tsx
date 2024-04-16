@@ -303,6 +303,9 @@ const ReactImagePickerEditor = memo(
       useImperativeHandle(ref, () => ({
         onOpenEditPanel,
         handleFileSelect,
+        onCloseEditPanel,
+        onRemove,
+        onUpload
       }));
 
       return (
