@@ -19,6 +19,13 @@ import { convertImageUsingCanvas } from "./functions/image-processing";
 import EditImage from "./components/EditImage/EditImage";
 export * from "./models/index.models";
 
+interface ImagePickerEditorProps {
+  config?: ImagePickerConf;
+  imageSrcProp?: string;
+  color?: string;
+  imageChanged?: Function;
+}
+
 const initialConfig: ImagePickerConf = {
   language: "en",
   objectFit: "cover",
@@ -43,7 +50,7 @@ const initialState: IState = {
 };
 
 const ReactImagePickerEditor = memo(
-  forwardRef<ImagePickerEditorRef>(
+  forwardRef<ImagePickerEditorRef, ImagePickerEditorProps>(
     (
       {
         config = {},
