@@ -278,6 +278,20 @@ const ReactImagePickerEditor = memo(({ config = {}, imageSrcProp = '', color = '
 
   }
 
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        onCloseEditPanel(null);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
+
   return <div className="ReactImagePickerEditor">
     {!loadImage &&
       <div className="place-image">
