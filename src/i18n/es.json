@@ -13,6 +13,7 @@
   "max-height(px)": "max. alto",
   "Format": "Formato",
   "Crop": "Recortar",
+  "Confirm Crop": "Confirmar corte",
   "width(px)": "ancho(px)",
   "height(px)": "altura(px)",
   "Save": "Guardar",
@@ -23,5 +24,7 @@
   "Saturate": "Saturación",
   "Sepia": "Sepia",
   "Rotate": "Rotar",
-  "Undo": "Deshacer"
+  "Undo": "Deshacer",
+  "Basic": "Básico",
+  "Filters": "Filtros"
 }

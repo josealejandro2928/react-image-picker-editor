@@ -252,7 +252,7 @@ const EditImage = memo(({ labels = {}, image = '', color = '#1e88e5', initialSta
 
         <div className="control-panel">
           <TabContainer lazy borderLine>
-            <TabItem name="Basic">
+            <TabItem name={labels['Basic']}>
               {(!isMobile.current || (isMobile.current && !showCrop)) &&
                 (<React.Fragment><div style={{ display: 'flex', width: '100%', justifyContent: 'space-between' }}>
                   <p className="item-panel">{labels['Quality']}</p>
@@ -365,14 +365,15 @@ const EditImage = memo(({ labels = {}, image = '', color = '#1e88e5', initialSta
                   </div>
 
                   <p style={{ marginBottom: '4px !important' }}>
-                    <button title="Cut the image" className="icon-btn" onClick={onCrop}>
+                    <button title={labels['Confirm Crop']} className="icon-btn" onClick={onCrop}>
                       <span className="material-icons"> crop </span>
+                      <span style={{color: "#fff"}} >{labels['Confirm Crop']}</span>
                     </button>
                   </p>
                 </React.Fragment>
               }
             </TabItem>
-            <TabItem disabled={showCrop} name="Filters">
+            <TabItem disabled={showCrop} name={labels['Filters']}>
               <BasicFilter color={color} labels={labels} initialState={state.basicFilters} changeFilter={onChangeFilters}></BasicFilter>
             </TabItem>
           </TabContainer>
@@ -386,7 +387,7 @@ const EditImage = memo(({ labels = {}, image = '', color = '#1e88e5', initialSta
             <span className="material-icons"> refresh </span>
           </button>
           <div className='flex-row-start' style={{ marginTop: '10px', justifyContent: 'space-between', alignItems: 'center' }}>
-            <button className="save-btn" onClick={() => { onCloseEditPanel(true) }}>{labels['Save']}</button>
+            <button className="save-btn" disabled={showCrop} onClick={() => { onCloseEditPanel(true) }}>{labels['Save']}</button>
             {sizeImage && <p
               className="caption image-caption"
               style={{
