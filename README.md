@@ -71,7 +71,7 @@ import 'react-image-picker-editor/dist/index.css'
 
 ### More about the component
 
-The `ReactImagePickerEditor` component has a setting to change the width, length, the aspectRatio, and objectFit properti of the loaded image. In addition to the language ( en | es | fr | de ). It also has an initial compression ratio option that by default is null.
+The `ReactImagePickerEditor` component has a setting to change the width, length, the aspectRatio, and objectFit properti of the loaded image. In addition to the language ( en | es | fr | de | fa ). It also has an initial compression ratio option that by default is null.
 It is important to note that the quality factor for image compression is only for formats such as: jpeg and webp.
 The interface looks like this:
 

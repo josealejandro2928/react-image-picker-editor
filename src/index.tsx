@@ -7,6 +7,7 @@ import labelPT from './i18n/pt.json';
 import labelEn from './i18n/en.json';
 import labelFr from './i18n/fr.json';
 import labelDe from './i18n/de.json';
+import labelFa from './i18n/fa.json';
 import { convertImageUsingCanvas } from './functions/image-processing';
 import EditImage from './components/EditImage/EditImage';
 export * from './models/index.models';
@@ -122,6 +123,9 @@ const ReactImagePickerEditor = memo(
         }
         if (config.language == 'de') {
           setLabels({ ...labelDe });
+        }
+        if (config.language == 'fa') {
+          setLabels({ ...labelFa });
         }
       }
     }
