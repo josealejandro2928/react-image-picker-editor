@@ -447,6 +447,7 @@ const ReactImagePickerEditor = memo(
             initialState={state}
           ></EditImage>
             rtl={config.rtl || false}
+            dark={config.darkMode || false}
         )}
       </div>
     );

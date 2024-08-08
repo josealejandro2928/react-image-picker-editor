@@ -105,6 +105,7 @@ export interface ImagePickerConf {
 | hideDownloadBtn | boolean | hide the botton                                                                                                                                      |   false |
 | hideEditBtn     | boolean | hide the botton                                                                                                                                      |   false |
 | hideAddBtn      | boolean | hide the botton                                                                                                                                      |   false |
+| darkMode        | boolean | control dark mode                                                                                                                                    |   false |
 | rtl             | boolean | enable rtl adjustment                                                                                                                                |   false |
 
 A basic configuration object with compression applied would be:

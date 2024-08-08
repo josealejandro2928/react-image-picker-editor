@@ -243,7 +243,7 @@ const EditImage = memo(
     }
 
     return (
-      <div className='EditImage'>
+      <div className={`EditImage ${ dark ? "dark" : "" }`}>
         <div id='popup' className='popup'>
           <div
             style={{

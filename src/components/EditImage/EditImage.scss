@@ -218,4 +218,12 @@
   button:active {
     transform: scale(.95);
   }
+
+  &.dark {
+    .form-field {
+      select {
+        background-color: unset;
+      }
+    }
+  }
 }
