@@ -309,7 +309,7 @@ const ReactImagePickerEditor = memo(
     }, []);
 
     return (
-      <div className='ReactImagePickerEditor'>
+      <div className={`ReactImagePickerEditor ${ config.darkMode ? "dark" : "" }`}>
         {!loadImage && (
           <div className='place-image'>
             <div
@@ -445,9 +445,9 @@ const ReactImagePickerEditor = memo(
             color={color}
             image={imageSrc}
             initialState={state}
-          ></EditImage>
             rtl={config.rtl || false}
             dark={config.darkMode || false}
+          />
         )}
       </div>
     );

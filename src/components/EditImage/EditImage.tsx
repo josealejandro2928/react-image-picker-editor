@@ -314,7 +314,7 @@ const EditImage = memo(
                         style={{ display: 'flex', width: '100%', justifyContent: 'space-between' }}
                       >
                         {labels['Max dimensions']}
-                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: ".5rem" }}>
                           <input
                             disabled={showCrop}
                             readOnly={showCrop}
@@ -398,7 +398,7 @@ const EditImage = memo(
                     className='flex-row-start'
                     style={{ marginTop: '5px', justifyContent: 'space-between' }}
                   >
-                    <span style={{ display: 'flex', alignItems: 'center' }}>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: ".5rem" }}>
                       <input
                         type='checkbox'
                         onChange={(e) => {

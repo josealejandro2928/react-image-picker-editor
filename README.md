@@ -38,6 +38,7 @@ import 'react-image-picker-editor/dist/index.css'
     height: '250px',
     objectFit: 'contain',
     compressInitial: null,
+    darkMode: false,
     rtl: false
   };
   // const initialImage: string = '/assets/images/8ptAya.webp';
