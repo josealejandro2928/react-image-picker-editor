@@ -38,6 +38,7 @@ import 'react-image-picker-editor/dist/index.css'
     height: '250px',
     objectFit: 'contain',
     compressInitial: null,
+    rtl: false
   };
   // const initialImage: string = '/assets/images/8ptAya.webp';
   const initialImage = '';
@@ -104,6 +105,7 @@ export interface ImagePickerConf {
 | hideDownloadBtn | boolean | hide the botton                                                                                                                                      |   false |
 | hideEditBtn     | boolean | hide the botton                                                                                                                                      |   false |
 | hideAddBtn      | boolean | hide the botton                                                                                                                                      |   false |
+| rtl             | boolean | enable rtl adjustment                                                                                                                                |   false |
 
 A basic configuration object with compression applied would be:
 

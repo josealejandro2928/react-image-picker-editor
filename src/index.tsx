@@ -19,6 +19,8 @@ const initialConfig: ImagePickerConf = {
   hideDownloadBtn: false,
   hideEditBtn: false,
   hideAddBtn: false,
+  rtl: false,
+  darkMode: false,
   compressInitial: null,
 };
 
@@ -444,6 +446,7 @@ const ReactImagePickerEditor = memo(
             image={imageSrc}
             initialState={state}
           ></EditImage>
+            rtl={config.rtl || false}
         )}
       </div>
     );

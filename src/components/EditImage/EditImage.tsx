@@ -14,6 +14,8 @@ export interface EditImageProps {
   color: string;
   initialState: IState;
   saveUpdates: Function;
+  rtl: boolean
+  dark: boolean
 }
 const _initialState: IState = {
   quality: 92,
@@ -33,6 +35,8 @@ const EditImage = memo(
     image = '',
     color = '#1e88e5',
     initialState = _initialState,
+    rtl,
+    dark,
     saveUpdates = () => {},
   }: EditImageProps) => {
     const [state, setState] = useState<IState>(initialState);
@@ -474,7 +478,7 @@ const EditImage = memo(
               <button
                 title={labels['Undo']}
                 disabled={state.arrayCopiedImages.length <= 1}
-                style={{ position: 'absolute', right: '10px', top: '30px' }}
+                style={{ position: 'absolute', [rtl ? 'left' : 'right']: '10px', top: '30px' }}
                 className='icon-btn'
                 onClick={onRestore}
               >
