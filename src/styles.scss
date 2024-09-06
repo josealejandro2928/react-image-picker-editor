@@ -281,5 +281,17 @@
   }
 
 
-
+  &.dark {
+    .place-image {
+      .image-holder {
+        background-color: #1E1E1E;
+      }
+      .image-holder,
+      .editing-bar-btn {
+        .material-icons {
+          color: white;
+        }
+      }
+    }
+  }
 }

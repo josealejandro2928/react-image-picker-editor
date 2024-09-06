@@ -10,6 +10,8 @@ export interface ImagePickerConf {
   hideDownloadBtn?: boolean;
   hideEditBtn?: boolean;
   hideAddBtn?: boolean;
+  rtl?: boolean;
+  darkMode?: boolean;
 }
 
 export interface IState {

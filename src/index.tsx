@@ -7,6 +7,7 @@ import labelPT from './i18n/pt.json';
 import labelEn from './i18n/en.json';
 import labelFr from './i18n/fr.json';
 import labelDe from './i18n/de.json';
+import labelFa from './i18n/fa.json';
 import { convertImageUsingCanvas } from './functions/image-processing';
 import EditImage from './components/EditImage/EditImage';
 export * from './models/index.models';
@@ -18,6 +19,8 @@ const initialConfig: ImagePickerConf = {
   hideDownloadBtn: false,
   hideEditBtn: false,
   hideAddBtn: false,
+  rtl: false,
+  darkMode: false,
   compressInitial: null,
 };
 
@@ -122,6 +125,9 @@ const ReactImagePickerEditor = memo(
         }
         if (config.language == 'de') {
           setLabels({ ...labelDe });
+        }
+        if (config.language == 'fa') {
+          setLabels({ ...labelFa });
         }
       }
     }
@@ -303,7 +309,7 @@ const ReactImagePickerEditor = memo(
     }, []);
 
     return (
-      <div className='ReactImagePickerEditor'>
+      <div className={`ReactImagePickerEditor ${ config.darkMode ? "dark" : "" }`}>
         {!loadImage && (
           <div className='place-image'>
             <div
@@ -439,7 +445,9 @@ const ReactImagePickerEditor = memo(
             color={color}
             image={imageSrc}
             initialState={state}
-          ></EditImage>
+            rtl={config.rtl || false}
+            dark={config.darkMode || false}
+          />
         )}
       </div>
     );

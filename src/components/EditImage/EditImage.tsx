@@ -14,6 +14,8 @@ export interface EditImageProps {
   color: string;
   initialState: IState;
   saveUpdates: Function;
+  rtl: boolean
+  dark: boolean
 }
 const _initialState: IState = {
   quality: 92,
@@ -33,6 +35,8 @@ const EditImage = memo(
     image = '',
     color = '#1e88e5',
     initialState = _initialState,
+    rtl,
+    dark,
     saveUpdates = () => {},
   }: EditImageProps) => {
     const [state, setState] = useState<IState>(initialState);
@@ -239,7 +243,7 @@ const EditImage = memo(
     }
 
     return (
-      <div className='EditImage'>
+      <div className={`EditImage ${ dark ? "dark" : "" }`}>
         <div id='popup' className='popup'>
           <div
             style={{
@@ -310,7 +314,7 @@ const EditImage = memo(
                         style={{ display: 'flex', width: '100%', justifyContent: 'space-between' }}
                       >
                         {labels['Max dimensions']}
-                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: ".5rem" }}>
                           <input
                             disabled={showCrop}
                             readOnly={showCrop}
@@ -394,7 +398,7 @@ const EditImage = memo(
                     className='flex-row-start'
                     style={{ marginTop: '5px', justifyContent: 'space-between' }}
                   >
-                    <span style={{ display: 'flex', alignItems: 'center' }}>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: ".5rem" }}>
                       <input
                         type='checkbox'
                         onChange={(e) => {
@@ -474,7 +478,7 @@ const EditImage = memo(
               <button
                 title={labels['Undo']}
                 disabled={state.arrayCopiedImages.length <= 1}
-                style={{ position: 'absolute', right: '10px', top: '30px' }}
+                style={{ position: 'absolute', [rtl ? 'left' : 'right']: '10px', top: '30px' }}
                 className='icon-btn'
                 onClick={onRestore}
               >

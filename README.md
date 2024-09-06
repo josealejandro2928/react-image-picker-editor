@@ -38,6 +38,8 @@ import 'react-image-picker-editor/dist/index.css'
     height: '250px',
     objectFit: 'contain',
     compressInitial: null,
+    darkMode: false,
+    rtl: false
   };
   // const initialImage: string = '/assets/images/8ptAya.webp';
   const initialImage = '';
@@ -71,7 +73,7 @@ import 'react-image-picker-editor/dist/index.css'
 
 ### More about the component
 
-The `ReactImagePickerEditor` component has a setting to change the width, length, the aspectRatio, and objectFit properti of the loaded image. In addition to the language ( en | es | fr | de ). It also has an initial compression ratio option that by default is null.
+The `ReactImagePickerEditor` component has a setting to change the width, length, the aspectRatio, and objectFit properti of the loaded image. In addition to the language ( en | es | fr | de | fa ). It also has an initial compression ratio option that by default is null.
 It is important to note that the quality factor for image compression is only for formats such as: jpeg and webp.
 The interface looks like this:
 
@@ -104,6 +106,8 @@ export interface ImagePickerConf {
 | hideDownloadBtn | boolean | hide the botton                                                                                                                                      |   false |
 | hideEditBtn     | boolean | hide the botton                                                                                                                                      |   false |
 | hideAddBtn      | boolean | hide the botton                                                                                                                                      |   false |
+| darkMode        | boolean | control dark mode                                                                                                                                    |   false |
+| rtl             | boolean | enable rtl adjustment                                                                                                                                |   false |
 
 A basic configuration object with compression applied would be:
 
