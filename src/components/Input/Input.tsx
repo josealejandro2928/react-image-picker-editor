@@ -1,16 +1,17 @@
-import React, { memo, useRef } from 'react'
+import React, { memo, useRef } from 'react';
 import { useState, useEffect } from 'react';
 
 interface InputProps extends React.InputHTMLAttributes<any> {
-  onInputChangedEnd?: Function
-  onChangedDelayed?: Function
-  onChangedValue?: Function
-  delayMs?: number
+  onInputChangedEnd?: Function;
+  onChangedDelayed?: Function;
+  onChangedValue?: Function;
+  delayMs?: number;
+  testID?: string;
 }
 
-const Input = memo((props: React.InputHTMLAttributes<any> | InputProps) => {
-
-  const { onInputChangedEnd, onChangedDelayed, onChangedValue, delayMs, ...restProps } = props as any;
+const Input = memo((props: InputProps) => {
+  const { onInputChangedEnd, onChangedDelayed, onChangedValue, delayMs, testID, ...restProps } =
+    props as InputProps;
   const [state, setState] = useState<any>(props.value);
   const timerRef = useRef<any>();
   const mountRef = useRef<boolean>(true);
@@ -36,44 +37,53 @@ const Input = memo((props: React.InputHTMLAttributes<any> | InputProps) => {
     timerRef.current = setTimeout(() => {
       clearTimeout(timerRef.current);
       onChangedDelayed(state);
-    }, delayMs || 100)
+    }, delayMs || 100);
 
     return () => {
       clearTimeout(timerRef.current);
-    }
-
-  }, [state])
+    };
+  }, [state]);
 
   function changeValue(e: any) {
     if (['checkbox', 'radio'].includes(props.type as string)) {
-      setState(e.target.checked)
+      setState(e.target.checked);
       onChangedValue && onChangedValue(e.target.checked);
-
     } else {
-      setState(e.target.value)
+      setState(e.target.value);
       onChangedValue && onChangedValue(e.target.value);
     }
   }
 
   return (
     <React.Fragment>
-      {
-        onInputChangedEnd && <input {...restProps} className={restProps?.className} style={restProps.style}
+      {onInputChangedEnd && (
+        <input
+          data-testid={testID}
+          {...restProps}
+          className={restProps?.className}
+          style={restProps.style}
           value={props.value}
           onChange={changeValue}
-          onBlur={(e) => { onInputChangedEnd(e.target.value) }}
+          onBlur={(e) => {
+            onInputChangedEnd(e.target.value);
+          }}
           onKeyDown={(e) => {
-            if (e.key == 'Enter') onInputChangedEnd(state)
+            if (e.key == 'Enter') onInputChangedEnd(state);
           }}
         />
-      }
-      {
-        !onInputChangedEnd && <input {...restProps} className={restProps?.className} style={restProps.style}
+      )}
+      {!onInputChangedEnd && (
+        <input
+          data-testid={testID}
+          {...restProps}
+          className={restProps?.className}
+          style={restProps.style}
           value={props.value}
           onChange={changeValue}
         />
-      }
-    </React.Fragment>)
-})
+      )}
+    </React.Fragment>
+  );
+});
 
-export default Input
+export default Input;

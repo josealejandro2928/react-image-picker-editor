@@ -1,13 +1,11 @@
-import { IState } from '../models/index.models';
+import { IBasicFilterState, IState } from '../models/index.models';
 
 export const MAX_BUFFER_UNDO_MEMORY = 25;
-let rotate = 1;
-
 export const convertImageUsingCanvas = (
   dataSrc: string,
   changeHeight = false,
   state: IState,
-  options?: { getDimFromImage?: boolean; rotate?: number },
+  options?: { getDimFromImage?: boolean; rotate?: number }
 ): Promise<{ imageUri: string; state: any }> => {
   return new Promise(async (resolve, _) => {
     let img = document.createElement('img');
@@ -39,9 +37,19 @@ export const convertImageUsingCanvas = (
         canvas.width = width;
         canvas.height = height;
       }
+
+      // Apply rotation
+      if (state.rotation) {
+        ctx.save();
+        ctx.translate(canvas.width / 2, canvas.height / 2);
+        ctx.rotate((state.rotation * Math.PI) / 180);
+        ctx.translate(-canvas.width / 2, -canvas.height / 2);
+      }
+
       if (state.basicFilters) {
         ctx.filter = processFilter(state.basicFilters);
       }
+
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
       let type = state.format;
       var dataURI = canvas.toDataURL(`image/${type}`, quality);
@@ -116,15 +124,9 @@ export const dragElement = (element: any) => {
     // console.log(rectElemnt,rectHolder);
     // console.log('====================================');
     newTop = Math.max(newTop, rectHolder?.top as number);
-    newTop = Math.min(
-      newTop,
-      (rectHolder?.bottom as number) - rectElemnt.height,
-    );
+    newTop = Math.min(newTop, (rectHolder?.bottom as number) - rectElemnt.height);
     newLeft = Math.max(newLeft, rectHolder?.left as number);
-    newLeft = Math.min(
-      newLeft,
-      (rectHolder?.right as number) - rectElemnt.width,
-    );
+    newLeft = Math.min(newLeft, (rectHolder?.right as number) - rectElemnt.width);
     element.style.top = newTop + 'px';
     element.style.left = newLeft + 'px';
   }
@@ -152,15 +154,9 @@ export const dragElement = (element: any) => {
     // console.log('====================================');
 
     newTop = Math.max(newTop, rectHolder?.top as number);
-    newTop = Math.min(
-      newTop,
-      (rectHolder?.bottom as number) - rectElemnt.height,
-    );
+    newTop = Math.min(newTop, (rectHolder?.bottom as number) - rectElemnt.height);
     newLeft = Math.max(newLeft, rectHolder?.left as number);
-    newLeft = Math.min(
-      newLeft,
-      (rectHolder?.right as number) - rectElemnt.width,
-    );
+    newLeft = Math.min(newLeft, (rectHolder?.right as number) - rectElemnt.width);
     element.style.top = newTop + 'px';
     element.style.left = newLeft + 'px';
   }

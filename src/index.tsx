@@ -35,6 +35,7 @@ const initialState: IState = {
   originImageSrc: '',
   basicFilters: undefined,
   quality: 100,
+  rotation: 0,
 };
 
 const ReactImagePickerEditor = memo(

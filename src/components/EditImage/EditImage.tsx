@@ -14,8 +14,8 @@ export interface EditImageProps {
   color: string;
   initialState: IState;
   saveUpdates: Function;
-  rtl: boolean
-  dark: boolean
+  rtl: boolean;
+  dark: boolean;
 }
 const _initialState: IState = {
   quality: 92,
@@ -27,6 +27,7 @@ const _initialState: IState = {
   format: 'jpeg',
   arrayCopiedImages: [],
   originImageSrc: '',
+  rotation: 0,
 };
 
 const EditImage = memo(
@@ -47,9 +48,10 @@ const EditImage = memo(
       height: 150,
     });
     const [croppState, setCroppState] = useState<
-      { x: number; y: number; width: number; height: number } | undefined | null
+    { x: number; y: number; width: number; height: number } | undefined | null
     >();
-
+    const [rotation, setRotation] = useState<number>(0);
+    
     const isMobile = useRef<boolean>(false);
     const allFormats = ['webp', 'jpeg', 'png'];
 
@@ -242,8 +244,14 @@ const EditImage = memo(
       return JSON.parse(JSON.stringify(obj));
     }
 
+    function onRotate(angle: number) {
+      const newRotation = (rotation + angle + 360) % 360;
+      setRotation(newRotation);
+      applyChanges({ ...state, rotation: newRotation }, false);
+    }
+
     return (
-      <div className={`EditImage ${ dark ? "dark" : "" }`}>
+      <div className={`EditImage ${dark ? 'dark' : ''}`}>
         <div id='popup' className='popup'>
           <div
             style={{
@@ -314,7 +322,7 @@ const EditImage = memo(
                         style={{ display: 'flex', width: '100%', justifyContent: 'space-between' }}
                       >
                         {labels['Max dimensions']}
-                        <div style={{ display: 'flex', alignItems: 'center', gap: ".5rem" }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
                           <input
                             disabled={showCrop}
                             readOnly={showCrop}
@@ -398,8 +406,24 @@ const EditImage = memo(
                     className='flex-row-start'
                     style={{ marginTop: '5px', justifyContent: 'space-between' }}
                   >
-                    <span style={{ display: 'flex', alignItems: 'center', gap: ".5rem" }}>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
+                      <button
+                        disabled={showCrop}
+                        onClick={() => onRotate(-90)}
+                        className='icon-btn'
+                      >
+                        <span className='material-icons'>rotate_left</span>
+                      </button>
+
+                      <button disabled={showCrop} onClick={() => onRotate(90)} className='icon-btn'>
+                        <span className='material-icons'>rotate_right</span>
+                      </button>
+                    </span>
+
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
                       <input
+                        data-testid="set-crop-checkbox"
+                        name="set-crop"
                         type='checkbox'
                         onChange={(e) => {
                           setShowCrop(e.target.checked);

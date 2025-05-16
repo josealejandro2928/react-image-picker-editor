@@ -2,7 +2,8 @@
   "compilerOptions": {
     "outDir": "dist",
     "module": "esnext",
-    "lib": ["dom", "esnext"],
+    "lib": ["dom", "esnext", "dom.iterable"],
+    "allowJs": true,
     "moduleResolution": "node",
     "jsx": "react",
     "sourceMap": true,
@@ -15,8 +16,9 @@
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "allowSyntheticDefaultImports": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "types": ["jest", "node", "@testing-library/jest-dom"]
   },
-  "include": ["src"],
-  "exclude": ["node_modules", "dist", "example"]
+  "include": ["src", "src/tests"],
+  "exclude": ["node_modules", "dist", "example", "example-next"]
 }

@@ -25,6 +25,7 @@ export interface IState {
   arrayCopiedImages: Array<ICacheData>;
   originImageSrc: string | null | undefined;
   basicFilters?: IBasicFilterState;
+  rotation: number;
 }
 
 export interface ICacheData {
